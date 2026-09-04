@@ -15,32 +15,34 @@ UI Design bridges the gap between abstract data model and actual visual interfac
 
 ## Overall Layout
 
-The DevOps Galaxy dashboard has three main sections:
+The DevOps Galaxy dashboard is an interactive, immersive experience designed to feel like exploring a real galaxy. It has two main sections:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  HEADER                                                       │
-│  DevOps Galaxy  |  Last Updated: 2026-09-04 10:35:45  [↻]   │
+│  HEADER (Overlay)                                             │
+│  DevOps Galaxy  |  Status: 3 Green, 0 Orange, 1 Red  [↻]   │
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
-│  GALAXY CANVAS (Main Visualization)                          │
+│  INTERACTIVE GALAXY ENVIRONMENT                              │
 │                                                               │
 │  ┌─────────────────────────────────────────────────────┐    │
+│  │ ✧ ✧  Animated starfield background            ✧  │    │
 │  │                                                     │    │
 │  │              🪐 frontend-service                   │    │
-│  │                      |                             │    │
-│  │                      ▼                             │    │
-│  │             🪐 api-service (●)                    │    │
-│  │              /                 \                   │    │
-│  │             /                   \                  │    │
-│  │            ▼                     ▼                 │    │
+│  │                      ↓                             │    │
+│  │             🪐 api-service ✧                      │    │
+│  │              ╱            ╲                        │    │
+│  │             ╱              ╲                       │    │
+│  │            ↓                ↓                      │    │
 │  │   🪐 database-service   🪐 payment-service       │    │
 │  │                                                     │    │
+│  │ (Pan with mouse, Zoom with scroll wheel)          │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                                                               │
-├─────────────────────────────────────────────────────────────┤
-│  FOOTER / INFO PANEL (Hidden initially, slides in on click) │
-├─────────────────────────────────────────────────────────────┤
+│  DETAIL PANEL (Slides in on planet click)                   │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ ✕ API Service | Status: Green | [...]             │    │
+│  └─────────────────────────────────────────────────────┘    │
 ```
 
 ---
@@ -74,15 +76,27 @@ The header provides information and controls.
 
 ---
 
-## Section 2: Galaxy Canvas
+## Section 2: Interactive Galaxy Environment
 
-This is the main visualization. Services are displayed as planets in a galaxy-like visualization.
+This is the main visualization. Services are displayed as **floating planets inside an interactive galaxy**. The environment is fully interactive and immersive.
 
-### Canvas Layout
+### Galaxy Environment
 
-- **Size:** Full width, full height (minus header/footer)
-- **Background:** Dark with subtle star field (optional)
-- **Viewable Area:** Scrollable/pannable canvas
+- **Size:** Full viewport (full width, full height minus header)
+- **Background:** Deep space with subtle animated starfield (twinkling stars, nebula effects)
+- **Coordinate System:** Infinite 2D space (planets can be positioned anywhere)
+- **Interactivity:** 
+  - **Pan:** Click and drag to move around the galaxy
+  - **Zoom:** Mouse wheel to zoom in/out
+  - **Reset:** Button or keyboard shortcut to center view and reset zoom
+
+### Visual Atmosphere
+
+The galaxy environment should feel:
+- **Immersive** — Like you're floating in space
+- **Responsive** — Planets and background react to interaction
+- **Calm** — Subtle animations, not jarring or distracting
+- **Professional** — Dark space theme consistent with DevOps tools
 
 ### Planet Representation
 
@@ -146,37 +160,40 @@ Each service is a planet:
 ### Interaction: Planet States
 
 #### Default State (Not Hovered)
-```
-         🟢
-      ◆━━⭐━━◆
-     ◆         ◆
-     ◆   api   ◆
-     ◆         ◆
-      ◆━━━━━━◆
-```
+- Planet floats in space
+- Subtle glow matches status color
+- Label visible below planet
+- Background starfield animates softly
 
 #### Hovered State
 ```
          🟢
-      ◆━━⭐━━◆     ◄─── Ring brightens
-     ◆         ◆     ◄─── Circle grows slightly
-     ◆   api   ◆     ◄─── Label becomes more prominent
-     ◆         ◆
+      ◆━━⭐━━◆     ◄─── Ring brightens & glows
+     ◆         ◆     ◄─── Circle grows slightly (1.15x scale)
+     ◆   api   ◆     ◄─── Label becomes brighter
+     ◆         ◆     ◄─── Glow effect intensifies
       ◆━━━━━━◆
     Cursor: pointer
-    Shadow: More prominent
+    Shadow: Prominent glow halo
 ```
 
 #### Clicked State
 ```
          🟢
-      ◆━━⭐━━◆     ◄─── Ring brightens
-     ◆         ◆     ◄─── Circle highlighted
-     ◆   api   ◆     ◄─── Details panel slides in
+      ◆━━⭐━━◆     ◄─── Highlighted
+     ◆         ◆     ◄─── Details panel slides in
+     ◆   api   ◆     ◄─── Planet may smoothly move to center (optional)
      ◆         ◆
       ◆━━━━━━◆
     Details Panel Appears ─►
 ```
+
+### Immersive Effects
+
+- **Floating Motion:** Planets have subtle floating/bobbing animations (optional parallax)
+- **Glow & Aura:** Each planet has a colored glow that matches its status
+- **Connection Lines:** Dependencies shown as glowing curves between planets
+- **Responsive:** Planets react smoothly to pan/zoom interactions
 
 ---
 
@@ -303,6 +320,26 @@ Links to external systems for deeper investigation.
 
 ---
 
+## Implementation: Using Existing Libraries
+
+The interactive galaxy environment (starfield animation, zoom, pan, particle effects, etc.) should **not be built from scratch**.
+
+When we reach implementation phase, we will:
+
+1. Research and evaluate existing libraries/components for interactive galaxy/space environments
+2. Look for features like:
+   - Canvas or WebGL-based rendering
+   - Particle systems or starfield effects
+   - Zoom and pan capabilities
+   - Smooth animations
+   - Good React integration
+3. Select an appropriate library that fits our needs
+4. Integrate it into our React application
+
+**Note:** No specific library has been chosen yet. This decision will be made during the implementation phase, after evaluating available options.
+
+---
+
 ## Color Scheme
 
 ### Status Colors
@@ -403,10 +440,12 @@ DevOps Galaxy should work on different screen sizes.
 
 ### Mobile Adaptations
 
-**Galaxy Canvas:**
+**Interactive Galaxy:**
 - Smaller planets (60px instead of 80px)
-- Zoom controls (+ / -)
+- Touch-friendly pan/drag gestures
 - Pinch-to-zoom support
+- On-screen zoom controls (+ / - buttons) as fallback
+- Simplified starfield (fewer particles for performance)
 
 **Detail Panel:**
 - Full width on mobile
@@ -415,7 +454,8 @@ DevOps Galaxy should work on different screen sizes.
 
 **Header:**
 - Simplified on mobile
-- Stack status info vertically if needed
+- Compact status info
+- Clear close button for detail panel
 
 ---
 
@@ -664,13 +704,15 @@ ERROR
 
 ## Summary: Key UI Principles
 
-1. **Dark Theme** — Reduces eye strain, makes status colors stand out
-2. **Clear Status Visualization** — Green/Orange/Red at a glance
-3. **Clickable Planets** — Hover feedback, click for details
-4. **Responsive** — Works on mobile, tablet, desktop
-5. **Fast Interactions** — Smooth animations, quick loads
-6. **Accessible** — Keyboard navigation, screen reader support
-7. **Professional** — Clean, modern design consistent with DevOps tools
+1. **Interactive Galaxy** — Immersive space environment with pan/zoom
+2. **Floating Planets** — Services as interactive planets with glow effects
+3. **Clear Status Visualization** — Green/Orange/Red colors at a glance
+4. **Responsive Interactions** — Smooth hover effects, immediate feedback
+5. **Immersive Atmosphere** — Animated starfield, subtle floating motion
+6. **Responsive Design** — Works on mobile (touch), tablet, desktop
+7. **Fast Interactions** — Smooth animations, quick loads
+8. **Accessible** — Keyboard navigation, screen reader support
+9. **Professional** — Modern design consistent with DevOps tools
 
 ---
 
