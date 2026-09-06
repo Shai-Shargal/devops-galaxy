@@ -22,14 +22,16 @@ export default function Galaxy() {
       // Create the spiral galaxy - fully formed and round from start
       const galaxy = window.Galaxy.create('spiral', containerRef.current, {
         speed: 0.3,           // Rotation speed (slower to match services)
-        stars: 3000,          // Increased: Number of particles/stars in spiral
+        stars: 8000,          // Particles in spiral arms (dense arms)
         colors: [             // Particle colors
           '#ffffff',          // White
           '#9bd0ff',          // Light blue
           '#c9b8ff'           // Light purple
         ],
         size: 2,              // Particle size
-        count: 20000          // Increased: Total particles fill in complete round galaxy
+        count: 50000,         // Total background particles (fill complete shape)
+        core: true,           // Add glowing core center
+        arms: 4               // Number of spiral arms
       })
 
       console.log('✨ GalaxyJS initialized')
