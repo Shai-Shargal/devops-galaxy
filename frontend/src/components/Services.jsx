@@ -102,7 +102,13 @@ export default function Services() {
   const rotationRef = useRef(0)
   const animationIdRef = useRef(null)
   const selectedServiceRef = useRef(null)
+  const servicesRef = useRef([])
   const [planetPositions, setPlanetPositions] = React.useState({})
+
+  // Keep services ref in sync
+  React.useEffect(() => {
+    servicesRef.current = services
+  }, [services])
 
   const {
     services,
@@ -138,50 +144,46 @@ export default function Services() {
     return () => window.removeEventListener('resize', updateDimensions)
   }, [])
 
-  // Smooth animation loop - synchronized with GalaxyJS
-  // Pauses when detail panel is open, resumes when closed
-  // Uses ref to avoid restarting animation loop
+  // Smooth animation loop - runs once at mount, never stops
+  // Pauses rotation when detail panel is open, resumes when closed
   useEffect(() => {
-    if (services.length === 0 || centerX === 0 || centerY === 0) return
-
     const animate = () => {
       // Only animate if no service is selected (detail panel is closed)
-      // Check ref instead of state to avoid restarting the loop
       if (!selectedServiceRef.current) {
-        // Increment rotation - slower rotation
         rotationRef.current += 0.004
       }
 
-      // Calculate all planet positions (always update for smooth transitions)
-      const newPositions = {}
-      services.forEach(service => {
-        const theta = service.position.theta
-        const pos = getSpirralPosition(theta, rotationRef.current, centerX, centerY)
-        newPositions[service.id] = {
-          x: pos.x,
-          y: pos.y,
-          r: pos.r,
-          angle: pos.angle
-        }
-      })
+      // Calculate all planet positions
+      if (servicesRef.current.length > 0 && centerX > 0 && centerY > 0) {
+        const newPositions = {}
+        servicesRef.current.forEach(service => {
+          const theta = service.position.theta
+          const pos = getSpirralPosition(theta, rotationRef.current, centerX, centerY)
+          newPositions[service.id] = {
+            x: pos.x,
+            y: pos.y,
+            r: pos.r,
+            angle: pos.angle
+          }
+        })
 
-      // Update state with new positions
-      setPlanetPositions(newPositions)
+        setPlanetPositions(newPositions)
+      }
 
-      // Continue animation loop
+      // Continue animation loop (NEVER stops)
       animationIdRef.current = requestAnimationFrame(animate)
     }
 
-    // Start the animation
+    // Start the animation once on mount
     animationIdRef.current = requestAnimationFrame(animate)
 
-    // Cleanup
+    // Cleanup only on unmount
     return () => {
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [services, centerX, centerY])
+  }, [centerX, centerY]) // Only depend on dimensions, not services or selected state
 
   // Get dependencies
   const selectedDependencies = React.useMemo(() => {
