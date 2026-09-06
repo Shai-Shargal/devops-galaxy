@@ -17,11 +17,11 @@ import './Services.css'
 
 /**
  * Spiral math constants
- * Compact spiral - keeps services very close to center
+ * Very compact spiral - services very close to center
  */
 const SPIRAL_CONFIG = {
-  a: 50,            // Inner radius
-  b: 85,            // Spacing between arms
+  a: 35,            // Inner radius
+  b: 60,            // Spacing between arms
   maxTheta: 8 * Math.PI
 }
 
@@ -137,8 +137,8 @@ export default function Services() {
     if (services.length === 0 || centerX === 0 || centerY === 0) return
 
     const animate = () => {
-      // Increment rotation to match GalaxyJS speed
-      rotationRef.current += 0.01
+      // Increment rotation - slower rotation
+      rotationRef.current += 0.004
 
       // Calculate all planet positions
       const newPositions = {}
