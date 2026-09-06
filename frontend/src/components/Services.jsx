@@ -18,24 +18,28 @@ import './Services.css'
 
 /**
  * Spiral math constants
- * Tightly centered spiral - services integrate visually with galaxy particles
+ * Services positioned along tight spiral arms, perfectly centered with galaxy
  *
- * a: Controls inner radius (smaller = more centered)
- * b: Controls spiral arm spacing (smaller = tighter spiral)
+ * The spiral is tuned so services appear AS PART OF the galaxy,
+ * not scattered outside it. All services stay within ~180px of center.
  *
- * Tuned for visual alignment with GalaxyJS particle distribution
+ * Formula: r = baseRadius + (theta / maxTheta) * maxRadialDistance
  */
 const SPIRAL_CONFIG = {
-  a: 25,            // Inner radius (smaller for better centering)
-  b: 50,            // Spacing between arms (tighter spiral)
+  baseRadius: 70,          // Start this far from center (60-80px is sweet spot)
+  maxRadialDistance: 100,  // Grow outward by this much across full rotation
   maxTheta: 8 * Math.PI
 }
 
 /**
  * Calculate position on spiral given theta and rotation angle
+ *
+ * Positions services along logarithmic spiral arms.
+ * All services stay within 160-170px from center to integrate with galaxy.
  */
 function getSpirralPosition(theta, rotation, centerX, centerY) {
-  const r = SPIRAL_CONFIG.a + SPIRAL_CONFIG.b * (theta / SPIRAL_CONFIG.maxTheta) * 10
+  // Linear radial growth: keeps spiral tight and centered
+  const r = SPIRAL_CONFIG.baseRadius + (theta / SPIRAL_CONFIG.maxTheta) * SPIRAL_CONFIG.maxRadialDistance
   const angle = theta + rotation
 
   return {
