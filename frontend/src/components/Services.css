@@ -23,7 +23,9 @@
   transform: translate(-50%, -50%);
   cursor: pointer;
   pointer-events: all;
-  transition: all 150ms ease-out;
+  /* NO transition on position (left/top) - animation loop updates every frame */
+  /* Only transition on transform (scale) for hover/select effects */
+  transition: transform 150ms ease-out;
   border-radius: 50%;
 }
 
