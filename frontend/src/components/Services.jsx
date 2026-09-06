@@ -14,7 +14,6 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 // ✅ All imports present: useState, useMemo, useCallback, useRef, useEffect
 import { useServices } from '../hooks/useServices'
-import { getThetaJitter } from '../data/mockServices'
 import './Services.css'
 
 /**
@@ -185,10 +184,8 @@ export default function Services() {
 
           // Only update if element exists and hasn't been removed
           if (planetElement && planetElement.isConnected) {
-            // Apply deterministic random jitter to theta for natural placement variation
-            // Same service always gets same jitter (seeded by ID)
-            const jitter = getThetaJitter(service.id)
-            const theta = service.position.theta + jitter
+            // Use exact theta position - no jitter (eliminates shaking)
+            const theta = service.position.theta
             const pos = getSpirralPosition(theta, rotationRef.current, centerRef.current.x, centerRef.current.y)
 
             // Direct DOM update - NO React render triggered
