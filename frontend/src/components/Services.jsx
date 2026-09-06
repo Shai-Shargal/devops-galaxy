@@ -2,15 +2,16 @@
  * Services Component
  *
  * Renders interactive service planets that rotate WITH the galaxy.
+ * Uses its own animation loop for smooth, synchronized movement.
  *
  * Architecture:
- * - Receives rotation angle from Galaxy component
- * - Calculates planet positions using spiral math + rotation
- * - Positions update dynamically as galaxy rotates
- * - Planets appear as integrated part of the galaxy
+ * - Services maintains its own animation state
+ * - Calculates positions in animation loop (not React state)
+ * - Updates DOM directly for smooth 60fps movement
+ * - Stays perfectly synchronized with GalaxyJS
  */
 
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { useServices } from '../hooks/useServices'
 import './Services.css'
 
@@ -19,8 +20,6 @@ import './Services.css'
  * Must match GalaxyJS spiral parameters
  */
 const SPIRAL_CONFIG = {
-  centerX: 0,        // Will be set based on container
-  centerY: 0,        // Will be set based on container
   a: 50,            // Inner radius
   b: 80,            // Spacing between arms
   maxTheta: 8 * Math.PI
@@ -51,10 +50,10 @@ function ServicePlanet({
   onSelect
 }) {
   const statusColor = {
-    green: '#10b981',   // Emerald
-    orange: '#f59e0b',  // Amber
-    red: '#ef4444'      // Red
-  }[service.status] || '#64748b' // Gray for unknown
+    green: '#10b981',
+    orange: '#f59e0b',
+    red: '#ef4444'
+  }[service.status] || '#64748b'
 
   const handleClick = (e) => {
     e.stopPropagation()
@@ -84,20 +83,9 @@ function ServicePlanet({
       tabIndex={0}
       aria-label={`${service.name} - Status: ${service.status}`}
     >
-      {/* Glow effect */}
       <div className="planet-glow" />
-
-      {/* Main circle */}
       <div className="planet-circle" />
-
-      {/* Status indicator icon */}
-      <div className="planet-icon">
-        {service.status === 'green' && '✓'}
-        {service.status === 'orange' && '⏳'}
-        {service.status === 'red' && '✕'}
-      </div>
-
-      {/* Service name label */}
+      <div className="planet-icon" />
       <div className="planet-label">{service.name}</div>
     </div>
   )
@@ -106,12 +94,15 @@ function ServicePlanet({
 /**
  * Services Container Component
  *
- * Manages all service planets and their interactions
- * Synchronizes with galaxy rotation
+ * Manages service planets with smooth animation synchronized to galaxy
  */
-export default function Services({ rotation = 0 }) {
+export default function Services() {
   const containerRef = React.useRef(null)
   const [containerDims, setContainerDims] = React.useState({ width: 0, height: 0 })
+  const rotationRef = useRef(0)
+  const animationIdRef = useRef(null)
+  const [planetPositions, setPlanetPositions] = React.useState({})
+
   const {
     services,
     selectedService,
@@ -125,7 +116,7 @@ export default function Services({ rotation = 0 }) {
   const centerX = containerDims.width / 2
   const centerY = containerDims.height / 2
 
-  // Update container dimensions on mount and resize
+  // Update container dimensions
   React.useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -138,31 +129,49 @@ export default function Services({ rotation = 0 }) {
 
     updateDimensions()
     window.addEventListener('resize', updateDimensions)
-
-    return () => {
-      window.removeEventListener('resize', updateDimensions)
-    }
+    return () => window.removeEventListener('resize', updateDimensions)
   }, [])
 
-  // Calculate planet positions based on rotation
-  const planetPositions = useMemo(() => {
-    const positions = {}
+  // Smooth animation loop - synchronized with GalaxyJS
+  useEffect(() => {
+    if (services.length === 0 || centerX === 0 || centerY === 0) return
 
-    services.forEach(service => {
-      const theta = service.position.theta
-      const pos = getSpirralPosition(theta, rotation, centerX, centerY)
-      positions[service.id] = {
-        x: pos.x,
-        y: pos.y,
-        r: pos.r,
-        angle: pos.angle
+    const animate = () => {
+      // Increment rotation to match GalaxyJS speed
+      rotationRef.current += 0.005
+
+      // Calculate all planet positions
+      const newPositions = {}
+      services.forEach(service => {
+        const theta = service.position.theta
+        const pos = getSpirralPosition(theta, rotationRef.current, centerX, centerY)
+        newPositions[service.id] = {
+          x: pos.x,
+          y: pos.y,
+          r: pos.r,
+          angle: pos.angle
+        }
+      })
+
+      // Update state with new positions
+      setPlanetPositions(newPositions)
+
+      // Continue animation loop
+      animationIdRef.current = requestAnimationFrame(animate)
+    }
+
+    // Start the animation
+    animationIdRef.current = requestAnimationFrame(animate)
+
+    // Cleanup
+    return () => {
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current)
       }
-    })
+    }
+  }, [services, centerX, centerY])
 
-    return positions
-  }, [services, rotation, centerX, centerY])
-
-  // Get dependencies and dependents for the selected service
+  // Get dependencies
   const selectedDependencies = React.useMemo(() => {
     if (!selectedService) return []
     return getDependencies(selectedService.id)
@@ -173,7 +182,7 @@ export default function Services({ rotation = 0 }) {
     return getDependents(selectedService.id)
   }, [selectedService, getDependents])
 
-  // Handle clicking outside planets to deselect
+  // Handle clicking outside
   const handleContainerClick = (e) => {
     if (e.target === e.currentTarget) {
       clearSelection()
@@ -197,7 +206,7 @@ export default function Services({ rotation = 0 }) {
         />
       ))}
 
-      {/* Service Detail Panel (when selected) */}
+      {/* Service Detail Panel */}
       {selectedService && (
         <ServiceDetailPanel
           service={selectedService}
@@ -212,8 +221,6 @@ export default function Services({ rotation = 0 }) {
 
 /**
  * Service Detail Panel Component
- *
- * Shows detailed information about the selected service
  */
 function ServiceDetailPanel({ service, dependencies, dependents, onClose }) {
   const statusText = {
