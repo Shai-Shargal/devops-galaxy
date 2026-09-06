@@ -172,8 +172,9 @@ export default function Services() {
     const animate = () => {
       // Only animate if no service is selected (detail panel is closed)
       if (!selectedServiceRef.current) {
-        // Slower rotation speed (synchronized with galaxy particle movement)
-        rotationRef.current += 0.002
+        // Very slow rotation (synchronized with galaxy particle movement)
+        // Rotation speed tuned to match GalaxyJS animation
+        rotationRef.current += 0.0005
       }
 
       // Calculate all planet positions and update DOM directly
