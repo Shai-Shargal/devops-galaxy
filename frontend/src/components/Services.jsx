@@ -133,14 +133,18 @@ export default function Services() {
   }, [])
 
   // Smooth animation loop - synchronized with GalaxyJS
+  // Pauses when detail panel is open, resumes when closed
   useEffect(() => {
     if (services.length === 0 || centerX === 0 || centerY === 0) return
 
     const animate = () => {
-      // Increment rotation - slower rotation
-      rotationRef.current += 0.004
+      // Only animate if no service is selected (detail panel is closed)
+      if (!selectedService) {
+        // Increment rotation - slower rotation
+        rotationRef.current += 0.004
+      }
 
-      // Calculate all planet positions
+      // Calculate all planet positions (always update for smooth transitions)
       const newPositions = {}
       services.forEach(service => {
         const theta = service.position.theta
@@ -169,7 +173,7 @@ export default function Services() {
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [services, centerX, centerY])
+  }, [services, centerX, centerY, selectedService])
 
   // Get dependencies
   const selectedDependencies = React.useMemo(() => {
