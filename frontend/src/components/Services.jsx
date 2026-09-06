@@ -112,12 +112,10 @@ function ServicePlanet({
  */
 export default function Services() {
   const containerRef = React.useRef(null)
-  const [containerDims, setContainerDims] = React.useState({ width: 0, height: 0 })
   const rotationRef = useRef(0)
   const animationIdRef = useRef(null)
   const selectedServiceRef = useRef(null)
   const servicesRef = useRef([])
-  const centerRef = useRef({ x: 0, y: 0 })
   const planetsRef = useRef({})  // Maps service.id → DOM element ref
 
   const {
@@ -135,47 +133,10 @@ export default function Services() {
     servicesRef.current = services
   }, [services])
 
-  // Keep center coordinates in sync
-  React.useEffect(() => {
-    centerRef.current = {
-      x: containerDims.width / 2,
-      y: containerDims.height / 2
-    }
-  }, [containerDims])
-
   // Track selected service in ref (so animation loop doesn't restart)
   React.useEffect(() => {
     selectedServiceRef.current = selectedService
   }, [selectedService])
-
-  // Update container dimensions on window resize (immediate, no debounce)
-  React.useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const width = containerRef.current.offsetWidth
-        const height = containerRef.current.offsetHeight
-        // Only update if dimensions actually changed and are valid
-        if (width > 0 && height > 0) {
-          setContainerDims(prev => {
-            if (prev.width === width && prev.height === height) {
-              return prev // No change, don't re-render
-            }
-            return { width, height }
-          })
-        }
-      }
-    }
-
-    // Get initial dimensions
-    updateDimensions()
-
-    // Update on window resize
-    window.addEventListener('resize', updateDimensions)
-
-    return () => {
-      window.removeEventListener('resize', updateDimensions)
-    }
-  }, [])
 
   // Smooth animation loop - runs once at mount, never stops
   // Pauses rotation when detail panel is open, resumes when closed
@@ -189,23 +150,28 @@ export default function Services() {
         rotationRef.current += 0.0005
       }
 
-      // Calculate all planet positions and update DOM directly
-      // NO React state updates - this keeps the animation frame unblocked
-      if (servicesRef.current.length > 0 && centerRef.current.x > 0 && centerRef.current.y > 0) {
-        servicesRef.current.forEach(service => {
-          const planetElement = planetsRef.current[service.id]
+      // Calculate center directly from container (no state = no re-renders)
+      if (containerRef.current && servicesRef.current.length > 0) {
+        const centerX = containerRef.current.offsetWidth / 2
+        const centerY = containerRef.current.offsetHeight / 2
 
-          // Only update if element exists and hasn't been removed
-          if (planetElement && planetElement.isConnected) {
-            // Use exact theta position - no jitter (eliminates shaking)
-            const theta = service.position.theta
-            const pos = getSpirralPosition(theta, rotationRef.current, centerRef.current.x, centerRef.current.y)
+        // Only proceed if center coordinates are valid
+        if (centerX > 0 && centerY > 0) {
+          servicesRef.current.forEach(service => {
+            const planetElement = planetsRef.current[service.id]
 
-            // Direct DOM update - NO React render triggered
-            planetElement.style.left = `${pos.x}px`
-            planetElement.style.top = `${pos.y}px`
-          }
-        })
+            // Only update if element exists and hasn't been removed
+            if (planetElement && planetElement.isConnected) {
+              // Use exact theta position - no jitter (eliminates shaking)
+              const theta = service.position.theta
+              const pos = getSpirralPosition(theta, rotationRef.current, centerX, centerY)
+
+              // Direct DOM update - NO React render triggered
+              planetElement.style.left = `${pos.x}px`
+              planetElement.style.top = `${pos.y}px`
+            }
+          })
+        }
       }
 
       // Continue animation loop (NEVER stops)
