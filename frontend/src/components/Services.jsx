@@ -103,12 +103,8 @@ export default function Services() {
   const animationIdRef = useRef(null)
   const selectedServiceRef = useRef(null)
   const servicesRef = useRef([])
+  const centerRef = useRef({ x: 0, y: 0 })
   const [planetPositions, setPlanetPositions] = React.useState({})
-
-  // Keep services ref in sync
-  React.useEffect(() => {
-    servicesRef.current = services
-  }, [services])
 
   const {
     services,
@@ -119,9 +115,18 @@ export default function Services() {
     getDependents
   } = useServices()
 
-  // Get center coordinates
-  const centerX = containerDims.width / 2
-  const centerY = containerDims.height / 2
+  // Keep services ref in sync
+  React.useEffect(() => {
+    servicesRef.current = services
+  }, [services])
+
+  // Keep center coordinates in sync
+  React.useEffect(() => {
+    centerRef.current = {
+      x: containerDims.width / 2,
+      y: containerDims.height / 2
+    }
+  }, [containerDims])
 
   // Track selected service in ref (so animation loop doesn't restart)
   React.useEffect(() => {
@@ -154,11 +159,11 @@ export default function Services() {
       }
 
       // Calculate all planet positions
-      if (servicesRef.current.length > 0 && centerX > 0 && centerY > 0) {
+      if (servicesRef.current.length > 0 && centerRef.current.x > 0 && centerRef.current.y > 0) {
         const newPositions = {}
         servicesRef.current.forEach(service => {
           const theta = service.position.theta
-          const pos = getSpirralPosition(theta, rotationRef.current, centerX, centerY)
+          const pos = getSpirralPosition(theta, rotationRef.current, centerRef.current.x, centerRef.current.y)
           newPositions[service.id] = {
             x: pos.x,
             y: pos.y,
@@ -183,7 +188,7 @@ export default function Services() {
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [centerX, centerY]) // Only depend on dimensions, not services or selected state
+  }, []) // NO dependencies - animation runs once and continues forever
 
   // Get dependencies
   const selectedDependencies = React.useMemo(() => {
