@@ -145,9 +145,10 @@ export default function Services() {
     const animate = () => {
       // Only animate if no service is selected (detail panel is closed)
       if (!selectedServiceRef.current) {
-        // Very slow rotation (synchronized with galaxy particle movement)
-        // Rotation speed tuned to match GalaxyJS animation
-        rotationRef.current += 0.0005
+        // Slow rotation (synchronized with galaxy particle movement)
+        // Speed tuned to balance smoothness and visual synchronization
+        // 0.0008 rad/frame = smooth movement without sub-pixel rendering artifacts
+        rotationRef.current += 0.0008
       }
 
       // Calculate center directly from container (no state = no re-renders)
