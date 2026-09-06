@@ -41,7 +41,12 @@ export function useAnimation(containerRef, servicesRef, selectedServiceRef, plan
      * Runs every requestAnimationFrame (~60fps)
      * No React state updates - pure DOM manipulation
      */
+    let frameCount = 0
+    let lastLogTime = Date.now()
+
     const animate = () => {
+      frameCount++
+
       // Only rotate if detail panel is closed
       if (!selectedServiceRef.current) {
         rotationRef.current += ANIMATION_CONFIG.rotationSpeed
@@ -49,6 +54,14 @@ export function useAnimation(containerRef, servicesRef, selectedServiceRef, plan
 
       // Get current container center (recalculated every frame)
       const center = getContainerCenter(containerRef.current)
+
+      // Debug: Log FPS every second
+      const now = Date.now()
+      if (now - lastLogTime >= 1000) {
+        console.log(`Animation FPS: ${frameCount}`)
+        frameCount = 0
+        lastLogTime = now
+      }
 
       // Update planet positions if we have valid data
       if (center && servicesRef.current.length > 0) {
