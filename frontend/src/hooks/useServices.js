@@ -82,22 +82,72 @@ export function useServices() {
     }
   }, [selectedService])
 
-  // Add a new service (future implementation)
+  // Add a new service with proper defaults
   const addService = useCallback((newService) => {
+    // Generate a theta position spread around the spiral
+    // Find the max theta from existing services and add ~0.5 radians
+    const maxTheta = services.length > 0
+      ? Math.max(...services.map(s => s.position?.theta || 0))
+      : 0
+    const newTheta = (maxTheta + 0.6) % (8 * Math.PI)
+
+    // Create a slug-like ID from service name
+    const serviceId = newService.id ||
+      `service-${newService.name?.toLowerCase().replace(/\s+/g, '-') || Date.now()}`
+
+    // Default pipeline data for new services
+    const defaultPipeline = {
+      latestRun: {
+        number: Math.floor(Math.random() * 300) + 1,
+        branch: 'main',
+        status: newService.status === 'green' ? 'passed' : newService.status === 'red' ? 'failed' : 'running',
+        triggeredBy: 'Demo User',
+        triggeredAt: new Date().toISOString(),
+        completedAt: newService.status === 'orange' ? null : new Date().toISOString(),
+        duration: newService.status === 'orange' ? null : Math.floor(Math.random() * 1500) + 600,
+        stages: {
+          build: {
+            status: 'passed',
+            duration: Math.floor(Math.random() * 400) + 250
+          },
+          test: {
+            status: newService.status === 'red' ? 'failed' : 'passed',
+            duration: Math.floor(Math.random() * 700) + 400
+          },
+          deploy: {
+            status: newService.status === 'red' ? 'skipped' : 'passed',
+            duration: newService.status === 'red' ? 0 : Math.floor(Math.random() * 600) + 300
+          }
+        }
+      },
+      lastCommit: {
+        hash: Math.random().toString(36).substring(2, 14),
+        message: 'Initial mock service commit',
+        author: 'Demo User',
+        authorEmail: 'demo@company.com',
+        url: '#',
+        pushedAt: new Date().toISOString()
+      }
+    }
+
     const serviceWithDefaults = {
-      id: newService.id || `service-${Date.now()}`,
+      id: serviceId,
+      name: newService.name || 'Untitled Service',
+      description: newService.description || 'Mock service created for demonstration',
+      team: newService.team || 'Demo Team',
+      repository: newService.repository || '#',
+      dataSource: 'github',
+      position: {
+        theta: newTheta
+      },
+      dependencies: newService.dependencies || [],
       status: newService.status || 'orange',
       lastUpdate: new Date().toISOString(),
-      dependencies: newService.dependencies || [],
-      pipeline: newService.pipeline || {
-        latestRun: null,
-        lastCommit: null
-      },
-      position: newService.position || { x: 0, y: 0, theta: 0 },
-      ...newService
+      pipeline: newService.pipeline || defaultPipeline
     }
+
     setServices(prev => [...prev, serviceWithDefaults])
-  }, [])
+  }, [services])
 
   // Delete a service (future implementation)
   const deleteService = useCallback((serviceId) => {
