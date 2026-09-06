@@ -1,0 +1,16 @@
+{
+  "name": "devops-galaxy-backend",
+  "version": "0.1.0",
+  "description": "DevOps Galaxy API server (Node.js + Express)",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": ["devops", "ci-cd", "pipeline", "visualization"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
