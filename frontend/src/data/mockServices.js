@@ -1,7 +1,7 @@
 /**
  * Mock Service Data - E-Commerce Microservices Architecture
  *
- * This represents a realistic e-commerce system with 12 interdependent services.
+ * 6 core services representing a realistic microservices system.
  *
  * Data structure is designed for future replacement with backend API (Level 2):
  * - Mock data (current)
@@ -27,12 +27,12 @@ function seededRandom(str) {
 
 /**
  * Generate theta jitter for natural, random service placement
- * Range: ±0.4 radians = ±23 degrees
+ * Range: ±0.15 radians = ±8.6 degrees (subtle, not shaky)
  * Deterministic: same service ID always produces same jitter
  */
 export function getThetaJitter(serviceId) {
   const randomValue = seededRandom(serviceId)
-  return (randomValue - 0.5) * 0.8 // ±0.4 radians
+  return (randomValue - 0.5) * 0.3 // ±0.15 radians (subtle jitter)
 }
 
 export const MOCK_SERVICES = [
@@ -44,7 +44,7 @@ export const MOCK_SERVICES = [
     repository: 'https://github.com/company/frontend-service',
     dataSource: 'github',
     position: {
-      theta: 0.5
+      theta: 0.8
     },
     dependencies: ['api-gateway'],
     status: 'green',
@@ -83,9 +83,9 @@ export const MOCK_SERVICES = [
     repository: 'https://github.com/company/api-gateway',
     dataSource: 'github',
     position: {
-      theta: 1.2
+      theta: 2.0
     },
-    dependencies: ['auth-service', 'product-service', 'order-service', 'search-service'],
+    dependencies: ['product-service', 'order-service'],
     status: 'green',
     lastUpdate: '2026-09-06T10:40:00Z',
     pipeline: {
@@ -115,55 +115,16 @@ export const MOCK_SERVICES = [
   },
 
   {
-    id: 'auth-service',
-    name: 'Auth Service',
-    description: 'Authentication, authorization, JWT tokens',
-    team: 'Security Team',
-    repository: 'https://github.com/company/auth-service',
-    dataSource: 'github',
-    position: {
-      theta: 2.0
-    },
-    dependencies: [],
-    status: 'green',
-    lastUpdate: '2026-09-06T10:42:00Z',
-    pipeline: {
-      latestRun: {
-        number: 89,
-        branch: 'main',
-        status: 'passed',
-        triggeredBy: 'Eve Wilson',
-        triggeredAt: '2026-09-06T09:00:00Z',
-        completedAt: '2026-09-06T09:20:00Z',
-        duration: 1200,
-        stages: {
-          build: { status: 'passed', duration: 300 },
-          test: { status: 'passed', duration: 600 },
-          deploy: { status: 'passed', duration: 300 }
-        }
-      },
-      lastCommit: {
-        hash: 'c3d4e5f6g7h8',
-        message: 'Add OAuth2 provider support',
-        author: 'Eve Wilson',
-        authorEmail: 'eve@company.com',
-        url: 'https://github.com/company/auth-service/commit/c3d4e5',
-        pushedAt: '2026-09-06T08:45:00Z'
-      }
-    }
-  },
-
-  {
     id: 'product-service',
     name: 'Product Service',
-    description: 'Product catalog, details, and metadata',
+    description: 'Product catalog and metadata',
     team: 'Catalog Team',
     repository: 'https://github.com/company/product-service',
     dataSource: 'github',
     position: {
-      theta: 2.8
+      theta: 3.4
     },
-    dependencies: ['cache-service'],
+    dependencies: [],
     status: 'orange',
     lastUpdate: '2026-09-06T10:20:00Z',
     pipeline: {
@@ -193,45 +154,6 @@ export const MOCK_SERVICES = [
   },
 
   {
-    id: 'inventory-service',
-    name: 'Inventory Service',
-    description: 'Stock management and warehouse integration',
-    team: 'Operations Team',
-    repository: 'https://github.com/company/inventory-service',
-    dataSource: 'jenkins',
-    position: {
-      theta: 3.6
-    },
-    dependencies: ['cache-service'],
-    status: 'green',
-    lastUpdate: '2026-09-06T10:38:00Z',
-    pipeline: {
-      latestRun: {
-        number: 167,
-        branch: 'main',
-        status: 'passed',
-        triggeredBy: 'Grace Martinez',
-        triggeredAt: '2026-09-06T09:45:00Z',
-        completedAt: '2026-09-06T10:10:00Z',
-        duration: 1500,
-        stages: {
-          build: { status: 'passed', duration: 350 },
-          test: { status: 'passed', duration: 700 },
-          deploy: { status: 'passed', duration: 450 }
-        }
-      },
-      lastCommit: {
-        hash: 'e5f6g7h8i9j0',
-        message: 'Fix inventory sync race condition',
-        author: 'Grace Martinez',
-        authorEmail: 'grace@company.com',
-        url: 'https://github.com/company/inventory-service/commit/e5f6g7',
-        pushedAt: '2026-09-06T09:30:00Z'
-      }
-    }
-  },
-
-  {
     id: 'order-service',
     name: 'Order Service',
     description: 'Order processing and lifecycle management',
@@ -239,9 +161,9 @@ export const MOCK_SERVICES = [
     repository: 'https://github.com/company/order-service',
     dataSource: 'github',
     position: {
-      theta: 4.4
+      theta: 4.8
     },
-    dependencies: ['payment-service', 'inventory-service', 'notification-service'],
+    dependencies: ['payment-service', 'notification-service'],
     status: 'green',
     lastUpdate: '2026-09-06T10:36:00Z',
     pipeline: {
@@ -278,7 +200,7 @@ export const MOCK_SERVICES = [
     repository: 'https://github.com/company/payment-service',
     dataSource: 'jenkins',
     position: {
-      theta: 5.2
+      theta: 6.2
     },
     dependencies: ['notification-service'],
     status: 'red',
@@ -317,7 +239,7 @@ export const MOCK_SERVICES = [
     repository: 'https://github.com/company/notification-service',
     dataSource: 'github',
     position: {
-      theta: 6.0
+      theta: 7.6
     },
     dependencies: [],
     status: 'green',
@@ -344,162 +266,6 @@ export const MOCK_SERVICES = [
         authorEmail: 'jack@company.com',
         url: 'https://github.com/company/notification-service/commit/h8i9j0',
         pushedAt: '2026-09-06T09:15:00Z'
-      }
-    }
-  },
-
-  {
-    id: 'search-service',
-    name: 'Search Service',
-    description: 'Elasticsearch integration for product search',
-    team: 'Search Team',
-    repository: 'https://github.com/company/search-service',
-    dataSource: 'github',
-    position: {
-      theta: 6.8
-    },
-    dependencies: ['product-service'],
-    status: 'green',
-    lastUpdate: '2026-09-06T10:41:00Z',
-    pipeline: {
-      latestRun: {
-        number: 112,
-        branch: 'main',
-        status: 'passed',
-        triggeredBy: 'Karen Davis',
-        triggeredAt: '2026-09-06T08:00:00Z',
-        completedAt: '2026-09-06T08:25:00Z',
-        duration: 1500,
-        stages: {
-          build: { status: 'passed', duration: 360 },
-          test: { status: 'passed', duration: 650 },
-          deploy: { status: 'passed', duration: 490 }
-        }
-      },
-      lastCommit: {
-        hash: 'i9j0k1l2m3n4',
-        message: 'Optimize search index rebuilding',
-        author: 'Karen Davis',
-        authorEmail: 'karen@company.com',
-        url: 'https://github.com/company/search-service/commit/i9j0k1',
-        pushedAt: '2026-09-06T07:45:00Z'
-      }
-    }
-  },
-
-  {
-    id: 'recommendation-service',
-    name: 'Recommendation Service',
-    description: 'ML-powered product recommendations',
-    team: 'ML Team',
-    repository: 'https://github.com/company/recommendation-service',
-    dataSource: 'github',
-    position: {
-      theta: 7.2
-    },
-    dependencies: ['product-service'],
-    status: 'green',
-    lastUpdate: '2026-09-06T10:37:00Z',
-    pipeline: {
-      latestRun: {
-        number: 76,
-        branch: 'main',
-        status: 'passed',
-        triggeredBy: 'Leo Martinez',
-        triggeredAt: '2026-09-06T08:45:00Z',
-        completedAt: '2026-09-06T09:15:00Z',
-        duration: 1800,
-        stages: {
-          build: { status: 'passed', duration: 400 },
-          test: { status: 'passed', duration: 900 },
-          deploy: { status: 'passed', duration: 500 }
-        }
-      },
-      lastCommit: {
-        hash: 'j0k1l2m3n4o5',
-        message: 'Update ML model training pipeline',
-        author: 'Leo Martinez',
-        authorEmail: 'leo@company.com',
-        url: 'https://github.com/company/recommendation-service/commit/j0k1l2',
-        pushedAt: '2026-09-06T08:30:00Z'
-      }
-    }
-  },
-
-  {
-    id: 'analytics-service',
-    name: 'Analytics Service',
-    description: 'Business intelligence and reporting',
-    team: 'Data Team',
-    repository: 'https://github.com/company/analytics-service',
-    dataSource: 'jenkins',
-    position: {
-      theta: 7.8
-    },
-    dependencies: ['order-service', 'product-service'],
-    status: 'green',
-    lastUpdate: '2026-09-06T10:33:00Z',
-    pipeline: {
-      latestRun: {
-        number: 204,
-        branch: 'main',
-        status: 'passed',
-        triggeredBy: 'Mona Torres',
-        triggeredAt: '2026-09-06T08:00:00Z',
-        completedAt: '2026-09-06T08:30:00Z',
-        duration: 1800,
-        stages: {
-          build: { status: 'passed', duration: 380 },
-          test: { status: 'passed', duration: 900 },
-          deploy: { status: 'passed', duration: 520 }
-        }
-      },
-      lastCommit: {
-        hash: 'k1l2m3n4o5p6',
-        message: 'Add revenue analytics dashboard',
-        author: 'Mona Torres',
-        authorEmail: 'mona@company.com',
-        url: 'https://github.com/company/analytics-service/commit/k1l2m3',
-        pushedAt: '2026-09-06T07:45:00Z'
-      }
-    }
-  },
-
-  {
-    id: 'cache-service',
-    name: 'Cache Service',
-    description: 'Redis cluster for caching layer',
-    team: 'Infrastructure Team',
-    repository: 'https://github.com/company/cache-service',
-    dataSource: 'github',
-    position: {
-      theta: 0.8
-    },
-    dependencies: [],
-    status: 'green',
-    lastUpdate: '2026-09-06T10:43:00Z',
-    pipeline: {
-      latestRun: {
-        number: 67,
-        branch: 'main',
-        status: 'passed',
-        triggeredBy: 'Noah Johnson',
-        triggeredAt: '2026-09-06T06:00:00Z',
-        completedAt: '2026-09-06T06:20:00Z',
-        duration: 1200,
-        stages: {
-          build: { status: 'passed', duration: 310 },
-          test: { status: 'passed', duration: 550 },
-          deploy: { status: 'passed', duration: 340 }
-        }
-      },
-      lastCommit: {
-        hash: 'l2m3n4o5p6q7',
-        message: 'Upgrade Redis to 7.0',
-        author: 'Noah Johnson',
-        authorEmail: 'noah@company.com',
-        url: 'https://github.com/company/cache-service/commit/l2m3n4',
-        pushedAt: '2026-09-06T05:45:00Z'
       }
     }
   }
