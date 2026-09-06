@@ -17,11 +17,11 @@ import './Services.css'
 
 /**
  * Spiral math constants
- * Scaled to make galaxy larger and spread out services
+ * Balanced size - larger than original but keeps services near center
  */
 const SPIRAL_CONFIG = {
-  a: 150,           // Inner radius (increased)
-  b: 200,           // Spacing between arms (increased)
+  a: 80,            // Inner radius
+  b: 120,           // Spacing between arms
   maxTheta: 8 * Math.PI
 }
 
