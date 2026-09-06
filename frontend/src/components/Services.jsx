@@ -14,6 +14,7 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 // ✅ All imports present: useState, useMemo, useCallback, useRef, useEffect
 import { useServices } from '../hooks/useServices'
+import { getThetaJitter } from '../data/mockServices'
 import './Services.css'
 
 /**
@@ -171,7 +172,8 @@ export default function Services() {
     const animate = () => {
       // Only animate if no service is selected (detail panel is closed)
       if (!selectedServiceRef.current) {
-        rotationRef.current += 0.004
+        // Slower rotation speed (synchronized with galaxy particle movement)
+        rotationRef.current += 0.002
       }
 
       // Calculate all planet positions and update DOM directly
@@ -182,7 +184,10 @@ export default function Services() {
 
           // Only update if element exists and hasn't been removed
           if (planetElement && planetElement.isConnected) {
-            const theta = service.position.theta
+            // Apply deterministic random jitter to theta for natural placement variation
+            // Same service always gets same jitter (seeded by ID)
+            const jitter = getThetaJitter(service.id)
+            const theta = service.position.theta + jitter
             const pos = getSpirralPosition(theta, rotationRef.current, centerRef.current.x, centerRef.current.y)
 
             // Direct DOM update - NO React render triggered

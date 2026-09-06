@@ -11,6 +11,30 @@
  * Users can edit mock pipeline data to experiment with different scenarios.
  */
 
+/**
+ * Generate deterministic random number based on a string
+ * Same input always produces same output (for consistent jitter across renders)
+ */
+function seededRandom(str) {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return Math.abs(hash % 1000) / 1000 // Returns 0-1
+}
+
+/**
+ * Generate theta jitter for natural, random service placement
+ * Range: ±0.4 radians = ±23 degrees
+ * Deterministic: same service ID always produces same jitter
+ */
+export function getThetaJitter(serviceId) {
+  const randomValue = seededRandom(serviceId)
+  return (randomValue - 0.5) * 0.8 // ±0.4 radians
+}
+
 export const MOCK_SERVICES = [
   {
     id: 'frontend-service',
