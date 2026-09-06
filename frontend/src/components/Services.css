@@ -28,6 +28,9 @@
   will-change: transform;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
+  /* CRITICAL: Prevent layout thrashing */
+  /* contain: layout paint isolates this element from parent layout calculations */
+  contain: layout paint;
   /* NO transition - animation updates 60x per second */
   /* Any transition would conflict with continuous updates */
 }
@@ -49,6 +52,10 @@
   background-color: var(--status-color);
   opacity: 0.3;
   filter: blur(3px);
+  /* Don't intercept events - parent handles them */
+  pointer-events: none;
+  /* Optimize opacity changes */
+  will-change: opacity;
 }
 
 .service-planet:hover .planet-glow {
@@ -68,6 +75,10 @@
   border-radius: 50%;
   background-color: var(--status-color);
   box-shadow: 0 0 4px var(--status-color);
+  /* Don't intercept events */
+  pointer-events: none;
+  /* Optimize for box-shadow changes */
+  will-change: box-shadow;
 }
 
 .service-planet:hover .planet-circle {
