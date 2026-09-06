@@ -148,34 +148,31 @@ export default function Services() {
     selectedServiceRef.current = selectedService
   }, [selectedService])
 
-  // Update container dimensions on window resize
+  // Update container dimensions on window resize (immediate, no debounce)
   React.useEffect(() => {
-    // Debounce resize updates to avoid excessive recalculation
-    let resizeTimeout
     const updateDimensions = () => {
-      clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(() => {
-        if (containerRef.current) {
-          const width = containerRef.current.offsetWidth
-          const height = containerRef.current.offsetHeight
-          if (width > 0 && height > 0) {
-            setContainerDims({
-              width,
-              height
-            })
-          }
+      if (containerRef.current) {
+        const width = containerRef.current.offsetWidth
+        const height = containerRef.current.offsetHeight
+        // Only update if dimensions actually changed and are valid
+        if (width > 0 && height > 0) {
+          setContainerDims(prev => {
+            if (prev.width === width && prev.height === height) {
+              return prev // No change, don't re-render
+            }
+            return { width, height }
+          })
         }
-      }, 100)
+      }
     }
 
-    // Initial dimensions
+    // Get initial dimensions
     updateDimensions()
 
-    // Listen to both window resize and container changes
+    // Update on window resize
     window.addEventListener('resize', updateDimensions)
 
     return () => {
-      clearTimeout(resizeTimeout)
       window.removeEventListener('resize', updateDimensions)
     }
   }, [])
