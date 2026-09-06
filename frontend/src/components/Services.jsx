@@ -148,20 +148,36 @@ export default function Services() {
     selectedServiceRef.current = selectedService
   }, [selectedService])
 
-  // Update container dimensions
+  // Update container dimensions on window resize
   React.useEffect(() => {
+    // Debounce resize updates to avoid excessive recalculation
+    let resizeTimeout
     const updateDimensions = () => {
-      if (containerRef.current) {
-        setContainerDims({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight
-        })
-      }
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        if (containerRef.current) {
+          const width = containerRef.current.offsetWidth
+          const height = containerRef.current.offsetHeight
+          if (width > 0 && height > 0) {
+            setContainerDims({
+              width,
+              height
+            })
+          }
+        }
+      }, 100)
     }
 
+    // Initial dimensions
     updateDimensions()
+
+    // Listen to both window resize and container changes
     window.addEventListener('resize', updateDimensions)
-    return () => window.removeEventListener('resize', updateDimensions)
+
+    return () => {
+      clearTimeout(resizeTimeout)
+      window.removeEventListener('resize', updateDimensions)
+    }
   }, [])
 
   // Smooth animation loop - runs once at mount, never stops
