@@ -138,7 +138,8 @@ export default function Services() {
 
     const animate = () => {
       // Increment rotation to match GalaxyJS speed
-      rotationRef.current += 0.005
+      // GalaxyJS speed: 0.5 means we need to match that rotation rate
+      rotationRef.current += 0.02
 
       // Calculate all planet positions
       const newPositions = {}
