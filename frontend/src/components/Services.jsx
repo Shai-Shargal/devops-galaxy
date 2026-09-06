@@ -18,11 +18,16 @@ import './Services.css'
 
 /**
  * Spiral math constants
- * Very compact spiral - services very close to center
+ * Tightly centered spiral - services integrate visually with galaxy particles
+ *
+ * a: Controls inner radius (smaller = more centered)
+ * b: Controls spiral arm spacing (smaller = tighter spiral)
+ *
+ * Tuned for visual alignment with GalaxyJS particle distribution
  */
 const SPIRAL_CONFIG = {
-  a: 35,            // Inner radius
-  b: 60,            // Spacing between arms
+  a: 25,            // Inner radius (smaller for better centering)
+  b: 50,            // Spacing between arms (tighter spiral)
   maxTheta: 8 * Math.PI
 }
 
@@ -116,6 +121,7 @@ export default function Services() {
     selectedService,
     selectService,
     clearSelection,
+    updateService,
     getDependencies,
     getDependents
   } = useServices()
@@ -250,6 +256,7 @@ export default function Services() {
           dependencies={selectedDependencies}
           dependents={selectedDependents}
           onClose={clearSelection}
+          onUpdateService={updateService}
         />
       )}
     </div>
@@ -258,8 +265,59 @@ export default function Services() {
 
 /**
  * Service Detail Panel Component
+ *
+ * Displays service info and pipeline data.
+ * Supports edit mode for mock pipeline experimentation (Level 1).
  */
-function ServiceDetailPanel({ service, dependencies, dependents, onClose }) {
+function ServiceDetailPanel({ service, dependencies, dependents, onClose, onUpdateService }) {
+  const [isEditMode, setIsEditMode] = React.useState(false)
+  const [editData, setEditData] = React.useState(null)
+
+  // Initialize edit data from service
+  const initEditMode = () => {
+    setEditData({
+      branch: service.pipeline?.latestRun?.branch || 'main',
+      status: service.pipeline?.latestRun?.status || 'passed',
+      commitMessage: service.pipeline?.lastCommit?.message || '',
+      stages: service.pipeline?.latestRun?.stages
+        ? { ...service.pipeline.latestRun.stages }
+        : { build: { status: 'passed', duration: 300 }, test: { status: 'passed', duration: 600 }, deploy: { status: 'passed', duration: 300 } }
+    })
+    setIsEditMode(true)
+  }
+
+  const cancelEdit = () => {
+    setEditData(null)
+    setIsEditMode(false)
+  }
+
+  const saveEdit = () => {
+    // Update service with edited pipeline data
+    const updatedService = {
+      ...service,
+      pipeline: {
+        ...service.pipeline,
+        latestRun: {
+          ...service.pipeline.latestRun,
+          branch: editData.branch,
+          status: editData.status,
+          stages: editData.stages
+        },
+        lastCommit: {
+          ...service.pipeline.lastCommit,
+          message: editData.commitMessage
+        }
+      },
+      // Update service status based on pipeline result
+      status: editData.status === 'failed' ? 'red' : editData.status === 'running' ? 'orange' : 'green',
+      lastUpdate: new Date().toISOString()
+    }
+
+    onUpdateService(service.id, updatedService)
+    setEditData(null)
+    setIsEditMode(false)
+  }
+
   const statusText = {
     green: 'Healthy',
     orange: 'Running',
@@ -276,9 +334,16 @@ function ServiceDetailPanel({ service, dependencies, dependents, onClose }) {
           <div className="status-badge" data-status={service.status} />
           <h2>{service.name}</h2>
         </div>
-        <button className="close-button" onClick={onClose} aria-label="Close">
-          ✕
-        </button>
+        <div className="detail-actions">
+          {!isEditMode && (
+            <button className="btn-edit" onClick={initEditMode} title="Edit pipeline data">
+              ✎ Edit
+            </button>
+          )}
+          <button className="close-button" onClick={onClose} aria-label="Close">
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className="detail-content">
@@ -312,47 +377,113 @@ function ServiceDetailPanel({ service, dependencies, dependents, onClose }) {
         {/* Latest Pipeline Section */}
         {latestRun && (
           <section className="detail-section">
-            <h3>Latest Pipeline</h3>
-            <div className="detail-row">
-              <span className="label">Run:</span>
-              <span className="value">#{latestRun.number}</span>
-            </div>
-            <div className="detail-row">
-              <span className="label">Branch:</span>
-              <span className="value">{latestRun.branch}</span>
-            </div>
-            <div className="detail-row">
-              <span className="label">Triggered by:</span>
-              <span className="value">{latestRun.triggeredBy}</span>
-            </div>
-            <div className="detail-row">
-              <span className="label">Started:</span>
-              <span className="value">
-                {new Date(latestRun.triggeredAt).toLocaleString()}
-              </span>
-            </div>
+            <h3>Latest Pipeline {isEditMode && <span className="edit-badge">Editing</span>}</h3>
 
-            {/* Pipeline Stages */}
-            <div className="stages">
-              <h4>Stages:</h4>
-              {Object.entries(latestRun.stages).map(([stageName, stageData]) => (
-                <div key={stageName} className="stage">
-                  <span className="stage-name">{stageName.charAt(0).toUpperCase() + stageName.slice(1)}</span>
-                  <span className={`stage-status ${stageData.status}`}>
-                    {stageData.status === 'passed' && '✓'}
-                    {stageData.status === 'failed' && '✕'}
-                    {stageData.status === 'running' && '⏳'}
-                    {stageData.status === 'skipped' && '⊘'}
-                  </span>
-                  <span className="stage-duration">({Math.round(stageData.duration / 60)}m)</span>
+            {isEditMode ? (
+              <div className="edit-mode">
+                <div className="form-group">
+                  <label>Pipeline Result</label>
+                  <select
+                    value={editData.status}
+                    onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                  >
+                    <option value="passed">✓ Passed</option>
+                    <option value="running">⏳ Running</option>
+                    <option value="failed">✕ Failed</option>
+                  </select>
                 </div>
-              ))}
-            </div>
+
+                <div className="form-group">
+                  <label>Branch</label>
+                  <input
+                    type="text"
+                    value={editData.branch}
+                    onChange={(e) => setEditData({ ...editData, branch: e.target.value })}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Stages</label>
+                  {Object.entries(editData.stages).map(([stageName, stageData]) => (
+                    <div key={stageName} className="stage-edit">
+                      <span className="stage-name">{stageName.charAt(0).toUpperCase() + stageName.slice(1)}</span>
+                      <select
+                        value={stageData.status}
+                        onChange={(e) => {
+                          const updatedStages = { ...editData.stages }
+                          updatedStages[stageName].status = e.target.value
+                          setEditData({ ...editData, stages: updatedStages })
+                        }}
+                      >
+                        <option value="passed">✓ Passed</option>
+                        <option value="failed">✕ Failed</option>
+                        <option value="running">⏳ Running</option>
+                        <option value="skipped">⊘ Skipped</option>
+                      </select>
+                      <div className="duration-input">
+                        <input
+                          type="number"
+                          min="0"
+                          value={stageData.duration}
+                          onChange={(e) => {
+                            const updatedStages = { ...editData.stages }
+                            updatedStages[stageName].duration = parseInt(e.target.value)
+                            setEditData({ ...editData, stages: updatedStages })
+                          }}
+                        />
+                        <span>seconds</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="edit-actions">
+                  <button className="btn-save" onClick={saveEdit}>Save Changes</button>
+                  <button className="btn-cancel" onClick={cancelEdit}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="detail-row">
+                  <span className="label">Run:</span>
+                  <span className="value">#{latestRun.number}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Branch:</span>
+                  <span className="value">{latestRun.branch}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Status:</span>
+                  <span className="value">{latestRun.status.charAt(0).toUpperCase() + latestRun.status.slice(1)}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Triggered by:</span>
+                  <span className="value">{latestRun.triggeredBy}</span>
+                </div>
+
+                {/* Pipeline Stages */}
+                <div className="stages">
+                  <h4>Stages:</h4>
+                  {Object.entries(latestRun.stages).map(([stageName, stageData]) => (
+                    <div key={stageName} className="stage">
+                      <span className="stage-name">{stageName.charAt(0).toUpperCase() + stageName.slice(1)}</span>
+                      <span className={`stage-status ${stageData.status}`}>
+                        {stageData.status === 'passed' && '✓'}
+                        {stageData.status === 'failed' && '✕'}
+                        {stageData.status === 'running' && '⏳'}
+                        {stageData.status === 'skipped' && '⊘'}
+                      </span>
+                      <span className="stage-duration">({Math.round(stageData.duration / 60)}m)</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
         )}
 
         {/* Last Commit Section */}
-        {lastCommit && (
+        {lastCommit && !isEditMode && (
           <section className="detail-section">
             <h3>Last Commit</h3>
             <div className="detail-row">
@@ -374,6 +505,21 @@ function ServiceDetailPanel({ service, dependencies, dependents, onClose }) {
                 </a>
               </div>
             )}
+          </section>
+        )}
+
+        {/* Commit Message Edit Section (in edit mode) */}
+        {isEditMode && editData && (
+          <section className="detail-section">
+            <h3>Commit Message</h3>
+            <div className="form-group">
+              <label>Message</label>
+              <textarea
+                value={editData.commitMessage}
+                onChange={(e) => setEditData({ ...editData, commitMessage: e.target.value })}
+                rows="3"
+              />
+            </div>
           </section>
         )}
 
