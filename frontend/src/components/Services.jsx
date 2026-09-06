@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+// ✅ All imports present: useState, useMemo, useCallback, useRef, useEffect
 import { useServices } from '../hooks/useServices'
 import './Services.css'
 
@@ -42,12 +43,15 @@ function getSpirralPosition(theta, rotation, centerX, centerY) {
 
 /**
  * Single Service Planet Component
+ *
+ * Position updates come from animation loop via direct DOM manipulation,
+ * NOT from React props. This keeps animation decoupled from React rendering.
  */
 function ServicePlanet({
   service,
-  position,
   isSelected,
-  onSelect
+  onSelect,
+  planetRef
 }) {
   const statusColor = {
     green: '#10b981',
@@ -70,10 +74,11 @@ function ServicePlanet({
 
   return (
     <div
+      ref={planetRef}
       className={`service-planet ${service.status} ${isSelected ? 'selected' : ''}`}
       style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
+        left: '0px',
+        top: '0px',
         '--status-color': statusColor
       }}
       onClick={handleClick}
@@ -104,7 +109,7 @@ export default function Services() {
   const selectedServiceRef = useRef(null)
   const servicesRef = useRef([])
   const centerRef = useRef({ x: 0, y: 0 })
-  const [planetPositions, setPlanetPositions] = React.useState({})
+  const planetsRef = useRef({})  // Maps service.id → DOM element ref
 
   const {
     services,
@@ -151,6 +156,7 @@ export default function Services() {
 
   // Smooth animation loop - runs once at mount, never stops
   // Pauses rotation when detail panel is open, resumes when closed
+  // ⚠️  CRITICAL: No state updates! Only direct DOM manipulation.
   useEffect(() => {
     const animate = () => {
       // Only animate if no service is selected (detail panel is closed)
@@ -158,21 +164,22 @@ export default function Services() {
         rotationRef.current += 0.004
       }
 
-      // Calculate all planet positions
+      // Calculate all planet positions and update DOM directly
+      // NO React state updates - this keeps the animation frame unblocked
       if (servicesRef.current.length > 0 && centerRef.current.x > 0 && centerRef.current.y > 0) {
-        const newPositions = {}
         servicesRef.current.forEach(service => {
-          const theta = service.position.theta
-          const pos = getSpirralPosition(theta, rotationRef.current, centerRef.current.x, centerRef.current.y)
-          newPositions[service.id] = {
-            x: pos.x,
-            y: pos.y,
-            r: pos.r,
-            angle: pos.angle
+          const planetElement = planetsRef.current[service.id]
+
+          // Only update if element exists and hasn't been removed
+          if (planetElement && planetElement.isConnected) {
+            const theta = service.position.theta
+            const pos = getSpirralPosition(theta, rotationRef.current, centerRef.current.x, centerRef.current.y)
+
+            // Direct DOM update - NO React render triggered
+            planetElement.style.left = `${pos.x}px`
+            planetElement.style.top = `${pos.y}px`
           }
         })
-
-        setPlanetPositions(newPositions)
       }
 
       // Continue animation loop (NEVER stops)
@@ -208,6 +215,16 @@ export default function Services() {
     }
   }
 
+  // Callback to store planet element refs
+  // Called when each ServicePlanet mounts
+  const setPlanetRef = useCallback((serviceId, element) => {
+    if (element) {
+      planetsRef.current[serviceId] = element
+    } else {
+      delete planetsRef.current[serviceId]
+    }
+  }, [])
+
   return (
     <div
       ref={containerRef}
@@ -215,13 +232,14 @@ export default function Services() {
       onClick={handleContainerClick}
     >
       {/* Render all service planets */}
+      {/* Position updates come from animation loop, not React props */}
       {services.map(service => (
         <ServicePlanet
           key={service.id}
           service={service}
-          position={planetPositions[service.id] || { x: 0, y: 0 }}
           isSelected={selectedService?.id === service.id}
           onSelect={selectService}
+          planetRef={(el) => setPlanetRef(service.id, el)}
         />
       ))}
 
