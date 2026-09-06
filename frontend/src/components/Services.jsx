@@ -101,6 +101,7 @@ export default function Services() {
   const [containerDims, setContainerDims] = React.useState({ width: 0, height: 0 })
   const rotationRef = useRef(0)
   const animationIdRef = useRef(null)
+  const selectedServiceRef = useRef(null)
   const [planetPositions, setPlanetPositions] = React.useState({})
 
   const {
@@ -115,6 +116,11 @@ export default function Services() {
   // Get center coordinates
   const centerX = containerDims.width / 2
   const centerY = containerDims.height / 2
+
+  // Track selected service in ref (so animation loop doesn't restart)
+  React.useEffect(() => {
+    selectedServiceRef.current = selectedService
+  }, [selectedService])
 
   // Update container dimensions
   React.useEffect(() => {
@@ -134,12 +140,14 @@ export default function Services() {
 
   // Smooth animation loop - synchronized with GalaxyJS
   // Pauses when detail panel is open, resumes when closed
+  // Uses ref to avoid restarting animation loop
   useEffect(() => {
     if (services.length === 0 || centerX === 0 || centerY === 0) return
 
     const animate = () => {
       // Only animate if no service is selected (detail panel is closed)
-      if (!selectedService) {
+      // Check ref instead of state to avoid restarting the loop
+      if (!selectedServiceRef.current) {
         // Increment rotation - slower rotation
         rotationRef.current += 0.004
       }
@@ -173,7 +181,7 @@ export default function Services() {
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [services, centerX, centerY, selectedService])
+  }, [services, centerX, centerY])
 
   // Get dependencies
   const selectedDependencies = React.useMemo(() => {
