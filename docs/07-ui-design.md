@@ -76,27 +76,55 @@ The header provides information and controls.
 
 ---
 
-## Section 2: Interactive Galaxy Environment
+## Section 2: Interactive Spiral Galaxy Environment
 
-This is the main visualization. Services are displayed as **floating planets inside an interactive galaxy**. The environment is fully interactive and immersive.
+This is the main visualization. Services are displayed as **planets positioned within a rotating spiral galaxy**. The environment is visually stunning and fully interactive.
+
+### Spiral Galaxy Concept
+
+Instead of floating planets in empty space, the galaxy takes the form of a **rotating spiral** — inspired by real spiral galaxies like the Milky Way.
+
+```
+        ╭─────────────────╮
+        │                 │
+        │    ╱─────────╲  │
+        │   ╱ Outer Arm ╲ │
+        │  │ ○ service  │ │
+        │  │            │ │
+        │  ╲   Central  ╱ │
+        │   ╲    Core  ╱  │
+        │    ╲─────────╱   │
+        │                 │
+        ╰─────────────────╯
+        
+   Rotating slowly
+   Services positioned on/near arms
+   Particles flowing through spiral
+```
 
 ### Galaxy Environment
 
 - **Size:** Full viewport (full width, full height minus header)
-- **Background:** Deep space with subtle animated starfield (twinkling stars, nebula effects)
-- **Coordinate System:** Infinite 2D space (planets can be positioned anywhere)
+- **Background:** Rotating spiral galaxy with particle effects
+- **Visual Style:** 
+  - Spiral arms rotating slowly (continuous or on-demand)
+  - Stars/particles flowing through the spiral
+  - Dark space background with depth
+  - Subtle nebula colors (purples, blues)
 - **Interactivity:** 
-  - **Pan:** Click and drag to move around the galaxy
+  - **Pan:** Click and drag to move around
   - **Zoom:** Mouse wheel to zoom in/out
-  - **Reset:** Button or keyboard shortcut to center view and reset zoom
+  - **Rotation Control:** Pause/resume spiral rotation
+  - **Reset:** Button to center view and reset zoom
 
 ### Visual Atmosphere
 
 The galaxy environment should feel:
-- **Immersive** — Like you're floating in space
-- **Responsive** — Planets and background react to interaction
-- **Calm** — Subtle animations, not jarring or distracting
-- **Professional** — Dark space theme consistent with DevOps tools
+- **Immersive** — Like you're inside a real galaxy
+- **Visually Striking** — Impressive, memorable, eye-catching
+- **Responsive** — Planets and spiral react to interaction
+- **Professional** — Beautiful but not distracting from data
+- **Engaging** — Something DevOps engineers want to use daily
 
 ### Planet Representation
 

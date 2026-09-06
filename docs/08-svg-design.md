@@ -1,21 +1,139 @@
-# SVG Design
+# SVG and Canvas Design
 
-## What is SVG Design?
+## Rendering Strategy: Canvas for Spiral, SVG for Interactions
 
-**SVG (Scalable Vector Graphics)** is a format for drawing vector graphics (shapes, lines, text) using XML. For DevOps Galaxy, SVG is how we render planets, connections, and labels on the canvas.
+DevOps Galaxy uses a **hybrid rendering approach**:
 
-**SVG Design** answers:
-- How do we draw planets (circles, rings, glows)?
-- How do we draw connections between planets (curved lines)?
-- How do we position planets in the galaxy?
-- How do we make planets interactive (clickable, hoverable)?
-- How do we handle zoom and pan?
+1. **Canvas Layer** — Renders the rotating spiral galaxy (background)
+   - Spiral arms
+   - Particle effects (stars flowing through)
+   - Smooth animations
+   - Mathematical precision
 
-SVG is perfect for DevOps Galaxy because:
-- Scalable (looks good at any zoom level)
-- Interactive (can respond to clicks, hovers)
-- Crisp (sharp lines and shapes, not blurry like canvas)
-- Accessible (can contain semantic information)
+2. **SVG/React Layer** — Interactive elements on top
+   - Service planets (clickable)
+   - Detail panels
+   - Controls (zoom, pan, refresh)
+
+This combines the visual beauty of Canvas with the interactivity of SVG/React.
+
+---
+
+## Canvas Design: The Spiral Galaxy
+
+The spiral galaxy is drawn using Canvas for performance and visual quality.
+
+### Why Canvas Over SVG?
+
+| Aspect | SVG | Canvas |
+|--------|-----|--------|
+| **Visual Quality** | Good for vectors | Better for particles/animations |
+| **Particle Effects** | Difficult | Natural/easy |
+| **Performance** | Slower with many elements | Faster for complex animations |
+| **Interactivity** | Built-in click detection | Requires manual handling |
+| **Best For** | Static/simple graphics | Dynamic/animated graphics |
+
+For a rotating spiral with flowing particles, **Canvas is the better choice**.
+
+### Spiral Rendering
+
+The spiral is drawn using mathematical functions:
+
+```javascript
+// Archimedean Spiral: r = a + b*θ
+
+function drawSpiral(ctx, rotation) {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  
+  ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)'; // Purple
+  ctx.lineWidth = 2;
+  
+  ctx.beginPath();
+  
+  for (let theta = 0; theta < 8 * Math.PI; theta += 0.05) {
+    const r = 50 + 100 * (theta / (8 * Math.PI));
+    const x = centerX + r * Math.cos(theta + rotation);
+    const y = centerY + r * Math.sin(theta + rotation);
+    
+    if (theta === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  
+  ctx.stroke();
+}
+```
+
+### Particle Effects
+
+Stars/particles flow through the spiral:
+
+```javascript
+class Particle {
+  constructor() {
+    this.theta = Math.random() * 8 * Math.PI;
+    this.speed = Math.random() * 0.01 + 0.005;
+    this.opacity = Math.random() * 0.8 + 0.2;
+    this.size = Math.random() * 2 + 1;
+  }
+  
+  update() {
+    this.theta += this.speed;
+    
+    // Wrap around
+    if (this.theta > 8 * Math.PI) {
+      this.theta = 0;
+    }
+  }
+  
+  draw(ctx, centerX, centerY, rotation) {
+    const r = 50 + 100 * (this.theta / (8 * Math.PI));
+    const x = centerX + r * Math.cos(this.theta + rotation);
+    const y = centerY + r * Math.sin(this.theta + rotation);
+    
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+    ctx.fillRect(x, y, this.size, this.size);
+  }
+}
+```
+
+### Rotation Animation
+
+The spiral rotates continuously:
+
+```javascript
+let rotation = 0;
+const rotationSpeed = 0.002; // Radians per frame
+
+function animate() {
+  // Clear canvas
+  ctx.fillStyle = '#1f2937';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw rotating spiral
+  drawSpiral(ctx, rotation);
+  
+  // Update and draw particles
+  particles.forEach(p => {
+    p.update();
+    p.draw(ctx, centerX, centerY, rotation);
+  });
+  
+  // Increment rotation
+  rotation += rotationSpeed;
+  
+  requestAnimationFrame(animate);
+}
+```
+
+---
+
+## SVG/React Design: Planets and Interactions
+
+While the spiral rotates in Canvas, service planets and interactive elements are managed by React/SVG.
 
 ---
 
