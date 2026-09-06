@@ -23,22 +23,20 @@
   /* Transform set by animation loop: translate3d(x, y, 0) translate(-50%, -50%) */
   cursor: pointer;
   pointer-events: all;
-  /* Transition only for hover/select scale effects, NOT position */
-  transition: transform 150ms ease-out;
   border-radius: 50%;
-  /* will-change hint to browser for GPU optimization */
+  /* GPU optimization - critical for smooth animation */
   will-change: transform;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  /* NO transition - animation updates 60x per second */
+  /* Any transition would conflict with continuous updates */
 }
 
 .service-planet:hover {
-  /* Scale effect: multiply scale with existing translate */
-  transform: translate(-50%, -50%) scale(1.8);
   z-index: 100;
 }
 
 .service-planet.selected {
-  /* Scale effect: multiply scale with existing translate */
-  transform: translate(-50%, -50%) scale(2.5);
   z-index: 101;
 }
 
