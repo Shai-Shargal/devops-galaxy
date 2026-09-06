@@ -15,6 +15,9 @@ class GalaxyPrototype {
     // Create spiral
     this.spiral = new Spiral(this.ctx, this.canvas.width, this.canvas.height);
 
+    // Create particle system
+    this.particleSystem = new ParticleSystem(this.spiral, 80);
+
     // Animation state
     this.rotation = 0;
     this.rotationSpeed = 0.002; // Radians per frame
@@ -30,9 +33,10 @@ class GalaxyPrototype {
     // Start animation
     this.animate();
 
-    // Log spiral info
-    console.log('🌌 DevOps Galaxy Prototype - Phase 1a');
+    // Log info
+    console.log('🌌 DevOps Galaxy Prototype - Phase 1b');
     console.log('Spiral Info:', this.spiral.getInfo());
+    console.log('Particle Info:', this.particleSystem.getInfo());
   }
 
   /**
@@ -66,6 +70,10 @@ class GalaxyPrototype {
 
     // Draw the spiral
     this.spiral.draw(this.rotation);
+
+    // Update and draw particles
+    this.particleSystem.update();
+    this.particleSystem.draw(this.ctx, this.rotation);
 
     // Update rotation
     this.rotation += this.rotationSpeed;
@@ -116,6 +124,20 @@ class GalaxyPrototype {
       console.log('Rotation paused');
     }
   }
+
+  /**
+   * Adjust particle count
+   */
+  setParticleCount(count) {
+    this.particleSystem.setParticleCount(count);
+  }
+
+  /**
+   * Get particle system info
+   */
+  getParticleInfo() {
+    return this.particleSystem.getInfo();
+  }
 }
 
 /**
@@ -128,7 +150,18 @@ document.addEventListener('DOMContentLoaded', () => {
   window.galaxy = galaxy;
 
   console.log('💡 Tip: Try these commands in console:');
-  console.log('  galaxy.toggleRotation()           - Pause/resume rotation');
-  console.log('  galaxy.setRotationSpeed(0.005)    - Change rotation speed');
-  console.log('  galaxy.spiral.getInfo()           - Get spiral parameters');
+  console.log('');
+  console.log('  ROTATION:');
+  console.log('    galaxy.toggleRotation()         - Pause/resume rotation');
+  console.log('    galaxy.setRotationSpeed(0.005)  - Change rotation speed');
+  console.log('');
+  console.log('  SPIRAL:');
+  console.log('    galaxy.spiral.getInfo()         - Get spiral parameters');
+  console.log('    galaxy.spiral.armCount = 3      - Change number of arms');
+  console.log('    galaxy.spiral.opacity = 0.6     - Change opacity');
+  console.log('');
+  console.log('  PARTICLES:');
+  console.log('    galaxy.getParticleInfo()        - Get particle stats');
+  console.log('    galaxy.setParticleCount(120)    - Change particle count');
+  console.log('');
 });
