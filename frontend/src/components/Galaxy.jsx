@@ -8,13 +8,16 @@ import './Galaxy.css'
  * This component handles:
  * - Rendering the galaxy visualization
  * - Initializing GalaxyJS with appropriate settings
+ * - Tracking rotation angle for service planets synchronization
  * - Providing a container for the canvas
  *
  * The galaxy itself is purely visual/environmental.
  * Application logic (services, status, interactions) is separate.
  */
-export default function Galaxy() {
+export default function Galaxy({ onRotationUpdate }) {
   const containerRef = useRef(null)
+  const rotationRef = useRef(0)
+  const animationIdRef = useRef(null)
 
   useEffect(() => {
     // Initialize GalaxyJS when component mounts
@@ -33,14 +36,26 @@ export default function Galaxy() {
       })
 
       console.log('✨ GalaxyJS initialized')
-      console.log('Galaxy instance:', galaxy)
 
-      // Expose to window for debugging if needed
+      // Expose to window for debugging
       window.galaxyInstance = galaxy
 
-      // Optional: Handle window resize
+      // Track rotation for service planets
+      // GalaxyJS updates in animation loop, we track it here
+      const trackRotation = () => {
+        rotationRef.current += 0.005 // Match approximate GalaxyJS speed
+
+        if (onRotationUpdate) {
+          onRotationUpdate(rotationRef.current)
+        }
+
+        animationIdRef.current = requestAnimationFrame(trackRotation)
+      }
+
+      trackRotation()
+
+      // Handle window resize
       const handleResize = () => {
-        // GalaxyJS handles resize automatically
         console.log('Window resized - GalaxyJS handles it automatically')
       }
 
@@ -48,9 +63,12 @@ export default function Galaxy() {
 
       return () => {
         window.removeEventListener('resize', handleResize)
+        if (animationIdRef.current) {
+          cancelAnimationFrame(animationIdRef.current)
+        }
       }
     }
-  }, [])
+  }, [onRotationUpdate])
 
   return (
     <div className="galaxy-container">

@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Galaxy from './components/Galaxy'
 import Services from './components/Services'
 import { useServices, useServiceStats } from './hooks/useServices'
 import './App.css'
 
 export default function App() {
+  const [rotation, setRotation] = useState(0)
   const { services, loading, error } = useServices()
   const stats = useServiceStats(services)
+
+  const handleRotationUpdate = (newRotation) => {
+    setRotation(newRotation)
+  }
 
   return (
     <div className="app">
@@ -41,8 +46,8 @@ export default function App() {
       </header>
 
       <main className="main">
-        <Galaxy />
-        {!loading && !error && <Services />}
+        <Galaxy onRotationUpdate={handleRotationUpdate} />
+        {!loading && !error && <Services rotation={rotation} />}
         {loading && <div className="loading">Loading services...</div>}
         {error && <div className="error">Error loading services: {error}</div>}
       </main>

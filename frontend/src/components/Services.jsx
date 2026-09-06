@@ -1,23 +1,55 @@
 /**
  * Services Component
  *
- * Renders interactive service planets on the galaxy.
- * Planets are application-controlled elements overlaid on the GalaxyJS visualization.
+ * Renders interactive service planets that rotate WITH the galaxy.
  *
  * Architecture:
- * - Galaxy remains pure visualization (background)
- * - Services are application state (React components)
- * - Can be rendered with any visualization backend
+ * - Receives rotation angle from Galaxy component
+ * - Calculates planet positions using spiral math + rotation
+ * - Positions update dynamically as galaxy rotates
+ * - Planets appear as integrated part of the galaxy
  */
 
-import React, { useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { useServices } from '../hooks/useServices'
 import './Services.css'
 
 /**
+ * Spiral math constants
+ * Must match GalaxyJS spiral parameters
+ */
+const SPIRAL_CONFIG = {
+  centerX: 0,        // Will be set based on container
+  centerY: 0,        // Will be set based on container
+  a: 50,            // Inner radius
+  b: 80,            // Spacing between arms
+  maxTheta: 8 * Math.PI
+}
+
+/**
+ * Calculate position on spiral given theta and rotation angle
+ */
+function getSpirralPosition(theta, rotation, centerX, centerY) {
+  const r = SPIRAL_CONFIG.a + SPIRAL_CONFIG.b * (theta / SPIRAL_CONFIG.maxTheta) * 10
+  const angle = theta + rotation
+
+  return {
+    x: centerX + r * Math.cos(angle),
+    y: centerY + r * Math.sin(angle),
+    r: r,
+    angle: angle
+  }
+}
+
+/**
  * Single Service Planet Component
  */
-function ServicePlanet({ service, isSelected, onSelect }) {
+function ServicePlanet({
+  service,
+  position,
+  isSelected,
+  onSelect
+}) {
   const statusColor = {
     green: '#10b981',   // Emerald
     orange: '#f59e0b',  // Amber
@@ -41,8 +73,8 @@ function ServicePlanet({ service, isSelected, onSelect }) {
     <div
       className={`service-planet ${service.status} ${isSelected ? 'selected' : ''}`}
       style={{
-        left: `${service.position.x}px`,
-        top: `${service.position.y}px`,
+        left: `${position.x}px`,
+        top: `${position.y}px`,
         '--status-color': statusColor
       }}
       onClick={handleClick}
@@ -75,8 +107,11 @@ function ServicePlanet({ service, isSelected, onSelect }) {
  * Services Container Component
  *
  * Manages all service planets and their interactions
+ * Synchronizes with galaxy rotation
  */
-export default function Services() {
+export default function Services({ rotation = 0 }) {
+  const containerRef = React.useRef(null)
+  const [containerDims, setContainerDims] = React.useState({ width: 0, height: 0 })
   const {
     services,
     selectedService,
@@ -86,13 +121,54 @@ export default function Services() {
     getDependents
   } = useServices()
 
+  // Get center coordinates
+  const centerX = containerDims.width / 2
+  const centerY = containerDims.height / 2
+
+  // Update container dimensions on mount and resize
+  React.useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        setContainerDims({
+          width: containerRef.current.offsetWidth,
+          height: containerRef.current.offsetHeight
+        })
+      }
+    }
+
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+
+    return () => {
+      window.removeEventListener('resize', updateDimensions)
+    }
+  }, [])
+
+  // Calculate planet positions based on rotation
+  const planetPositions = useMemo(() => {
+    const positions = {}
+
+    services.forEach(service => {
+      const theta = service.position.theta
+      const pos = getSpirralPosition(theta, rotation, centerX, centerY)
+      positions[service.id] = {
+        x: pos.x,
+        y: pos.y,
+        r: pos.r,
+        angle: pos.angle
+      }
+    })
+
+    return positions
+  }, [services, rotation, centerX, centerY])
+
   // Get dependencies and dependents for the selected service
-  const selectedDependencies = useMemo(() => {
+  const selectedDependencies = React.useMemo(() => {
     if (!selectedService) return []
     return getDependencies(selectedService.id)
   }, [selectedService, getDependencies])
 
-  const selectedDependents = useMemo(() => {
+  const selectedDependents = React.useMemo(() => {
     if (!selectedService) return []
     return getDependents(selectedService.id)
   }, [selectedService, getDependents])
@@ -105,57 +181,21 @@ export default function Services() {
   }
 
   return (
-    <div className="services-container" onClick={handleContainerClick}>
+    <div
+      ref={containerRef}
+      className="services-container"
+      onClick={handleContainerClick}
+    >
       {/* Render all service planets */}
       {services.map(service => (
         <ServicePlanet
           key={service.id}
           service={service}
+          position={planetPositions[service.id] || { x: 0, y: 0 }}
           isSelected={selectedService?.id === service.id}
           onSelect={selectService}
         />
       ))}
-
-      {/* Highlight dependencies when service is selected */}
-      {selectedService && (
-        <div className="dependency-highlight">
-          {/* Services this one depends on */}
-          {selectedDependencies.length > 0 && (
-            <div className="depends-on">
-              {selectedDependencies.map(dep => (
-                <div
-                  key={dep.id}
-                  className="dependency-arrow"
-                  style={{
-                    left: `${selectedService.position.x}px`,
-                    top: `${selectedService.position.y}px`,
-                    '--target-x': `${dep.position.x}px`,
-                    '--target-y': `${dep.position.y}px`
-                  }}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Services that depend on this one */}
-          {selectedDependents.length > 0 && (
-            <div className="depended-on">
-              {selectedDependents.map(dependent => (
-                <div
-                  key={dependent.id}
-                  className="dependency-arrow reverse"
-                  style={{
-                    left: `${dependent.position.x}px`,
-                    top: `${dependent.position.y}px`,
-                    '--target-x': `${selectedService.position.x}px`,
-                    '--target-y': `${selectedService.position.y}px`
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Service Detail Panel (when selected) */}
       {selectedService && (
