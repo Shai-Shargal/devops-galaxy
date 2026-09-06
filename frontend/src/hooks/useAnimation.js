@@ -70,9 +70,9 @@ export function useAnimation(containerRef, servicesRef, selectedServiceRef, plan
             const x = Math.round(pos.x)
             const y = Math.round(pos.y)
 
-            // Update DOM directly (no React re-render)
-            planetElement.style.left = `${x}px`
-            planetElement.style.top = `${y}px`
+            // Use CSS transforms (hardware-accelerated, no jitter)
+            // translate3d triggers GPU acceleration, translate(-50%, -50%) centers the dot
+            planetElement.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`
           }
         })
       }

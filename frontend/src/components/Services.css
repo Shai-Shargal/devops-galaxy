@@ -20,21 +20,24 @@
   position: absolute;
   width: 12px;
   height: 12px;
-  transform: translate(-50%, -50%);
+  /* Transform set by animation loop: translate3d(x, y, 0) translate(-50%, -50%) */
   cursor: pointer;
   pointer-events: all;
-  /* NO transition on position (left/top) - animation loop updates every frame */
-  /* Only transition on transform (scale) for hover/select effects */
+  /* Transition only for hover/select scale effects, NOT position */
   transition: transform 150ms ease-out;
   border-radius: 50%;
+  /* will-change hint to browser for GPU optimization */
+  will-change: transform;
 }
 
 .service-planet:hover {
+  /* Scale effect: multiply scale with existing translate */
   transform: translate(-50%, -50%) scale(1.8);
   z-index: 100;
 }
 
 .service-planet.selected {
+  /* Scale effect: multiply scale with existing translate */
   transform: translate(-50%, -50%) scale(2.5);
   z-index: 101;
 }
