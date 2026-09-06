@@ -1,7 +1,8 @@
 /**
  * Services Component Styles
  *
- * Styles for interactive service planets and detail panel
+ * Small service dots integrated with the galaxy
+ * Similar size to galaxy particles
  */
 
 .services-container {
@@ -13,25 +14,27 @@
   pointer-events: none;
 }
 
-/* ==================== SERVICE PLANET ==================== */
+/* ==================== SERVICE PLANET (Small Dot) ==================== */
 
 .service-planet {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 12px;
+  height: 12px;
   transform: translate(-50%, -50%);
   cursor: pointer;
   pointer-events: all;
-  transition: all 200ms ease-out;
+  transition: all 150ms ease-out;
   border-radius: 50%;
 }
 
 .service-planet:hover {
-  transform: translate(-50%, -50%) scale(1.15);
+  transform: translate(-50%, -50%) scale(1.8);
+  z-index: 100;
 }
 
 .service-planet.selected {
-  transform: translate(-50%, -50%) scale(1.25);
+  transform: translate(-50%, -50%) scale(2.5);
+  z-index: 101;
 }
 
 /* Glow effect */
@@ -41,20 +44,17 @@
   height: 100%;
   border-radius: 50%;
   background-color: var(--status-color);
-  opacity: 0.2;
-  filter: blur(8px);
-  animation: glow-pulse 3s ease-in-out infinite;
+  opacity: 0.3;
+  filter: blur(3px);
 }
 
-@keyframes glow-pulse {
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(1.05);
-  }
+.service-planet:hover .planet-glow {
+  opacity: 0.6;
+}
+
+.service-planet.selected .planet-glow {
+  opacity: 0.9;
+  filter: blur(8px);
 }
 
 /* Main planet circle */
@@ -64,63 +64,53 @@
   height: 100%;
   border-radius: 50%;
   background-color: var(--status-color);
-  box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.3),
-              inset 2px 2px 4px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 4px var(--status-color);
 }
 
-.service-planet.hovered .planet-circle {
-  filter: brightness(1.2);
+.service-planet:hover .planet-circle {
+  box-shadow: 0 0 12px var(--status-color), 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .service-planet.selected .planet-circle {
-  filter: brightness(1.3);
-  box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.3),
-              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
-              0 0 30px var(--status-color);
+  box-shadow: 0 0 20px var(--status-color), 0 0 30px rgba(255, 255, 255, 0.5);
 }
 
-/* Status icon inside planet */
+/* Status icon - hidden at small size */
 .planet-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 32px;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  z-index: 2;
+  display: none;
 }
 
-/* Service name label */
+/* Service name label - only show on hover/selected */
 .planet-label {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 8px;
-  font-size: 12px;
+  margin-top: 6px;
+  font-size: 11px;
   font-weight: 600;
   color: white;
   white-space: nowrap;
-  background-color: rgba(31, 41, 55, 0.9);
-  padding: 4px 8px;
-  border-radius: 4px;
+  background-color: rgba(31, 41, 55, 0.95);
+  padding: 2px 6px;
+  border-radius: 3px;
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0;
   transition: opacity 150ms ease;
   z-index: 10;
+  border: 1px solid var(--status-color);
 }
 
-.service-planet.hovered .planet-label {
+.service-planet:hover .planet-label {
   opacity: 1;
-  background-color: rgba(31, 41, 55, 1);
 }
 
 .service-planet.selected .planet-label {
   opacity: 1;
-  font-weight: 700;
   background-color: var(--status-color);
   color: white;
+  border-color: white;
+  font-weight: 700;
 }
 
 /* ==================== DEPENDENCY VISUALIZATION ==================== */
@@ -137,18 +127,7 @@
 .dependency-arrow {
   position: absolute;
   pointer-events: none;
-  opacity: 0.6;
-  transition: opacity 150ms ease;
-}
-
-.dependency-arrow::before {
-  content: '';
-  position: absolute;
-  width: 2px;
-  height: var(--distance);
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), transparent);
-  top: 0;
-  left: -1px;
+  opacity: 0.4;
 }
 
 /* ==================== SERVICE DETAIL PANEL ==================== */
@@ -156,7 +135,7 @@
 .service-detail-panel {
   position: fixed;
   right: 0;
-  top: 60px; /* Below header */
+  top: 60px;
   bottom: 0;
   width: 400px;
   max-width: 90vw;
@@ -430,11 +409,6 @@
       transform: translateY(0);
       opacity: 1;
     }
-  }
-
-  .service-planet .planet-label {
-    margin-top: 4px;
-    font-size: 10px;
   }
 }
 
