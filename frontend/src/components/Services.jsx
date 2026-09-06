@@ -17,11 +17,11 @@ import './Services.css'
 
 /**
  * Spiral math constants
- * Balanced size - larger than original but keeps services near center
+ * Compact spiral - keeps services very close to center
  */
 const SPIRAL_CONFIG = {
-  a: 80,            // Inner radius
-  b: 120,           // Spacing between arms
+  a: 50,            // Inner radius
+  b: 85,            // Spacing between arms
   maxTheta: 8 * Math.PI
 }
 
