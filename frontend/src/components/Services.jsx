@@ -166,9 +166,14 @@ export default function Services() {
               const theta = service.position.theta
               const pos = getSpirralPosition(theta, rotationRef.current, centerX, centerY)
 
+              // Round to whole pixels to avoid sub-pixel rendering artifacts at slow speeds
+              // This prevents browser repainting jitter with very small position changes
+              const x = Math.round(pos.x)
+              const y = Math.round(pos.y)
+
               // Direct DOM update - NO React render triggered
-              planetElement.style.left = `${pos.x}px`
-              planetElement.style.top = `${pos.y}px`
+              planetElement.style.left = `${x}px`
+              planetElement.style.top = `${y}px`
             }
           })
         }
