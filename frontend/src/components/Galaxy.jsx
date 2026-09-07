@@ -23,14 +23,14 @@ export default function Galaxy() {
       // Rotates right-to-left like a globe, easier to synchronize with service planets
       const galaxy = window.Galaxy.create('starcluster', containerRef.current, {
         speed: 0.15,          // Rotation speed (matched to service animation speed)
-        stars: 1000,          // Number of particles/stars in cluster
+        stars: 600,          // Number of particles/stars in cluster
         colors: [             // Particle colors
           '#ffffff',          // White
           '#9bd0ff',          // Light blue
           '#c9b8ff'           // Light purple
         ],
         size: 2,              // Particle size
-        count: 15000          // Total particles in field (background stars)
+        count: 1000          // Total particles in field (background stars)
       })
 
 
