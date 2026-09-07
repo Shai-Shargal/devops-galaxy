@@ -31,10 +31,6 @@ const STATUS_COLORS = {
 function ServicePlanet({ service, isSelected, onSelect, planetRef }) {
   const statusColor = STATUS_COLORS[service.status] || '#64748b'
 
-  React.useEffect(() => {
-    console.log(`🪐 ServicePlanet rendered: ${service.name} (${service.id})`)
-  }, [service.id, service.name])
-
   const handleClick = (e) => {
     e.stopPropagation()
     onSelect(service.id)
