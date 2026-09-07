@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Galaxy from './components/Galaxy'
-import Services from './components/Services'
+import Services from './components/Services/Services'
 import AddServiceModal from './components/AddServiceModal'
 import { useServices, useServiceStats } from './hooks/useServices'
 import './App.css'
