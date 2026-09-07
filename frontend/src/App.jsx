@@ -10,6 +10,8 @@ export default function App() {
   const stats = useServiceStats(services)
   const [isAddServiceModalOpen, setIsAddServiceModalOpen] = useState(false)
 
+  console.log(`🚀 App rendered with ${services.length} services`)
+
   return (
     <div className="app">
       <header className="header">

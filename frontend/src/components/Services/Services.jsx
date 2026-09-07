@@ -41,11 +41,14 @@ function Services({ services: propsServices }) {
   // Use services from props if provided, otherwise use hook
   const services = propsServices || hookServices
 
+  console.log(`📦 Services component rendered with ${services.length} services (from ${propsServices ? 'props' : 'hook'})`)
+
   // Setup animation loop
   useAnimation(containerRef, servicesRef, selectedServiceRef, planetsRef)
 
   // Keep services ref in sync
   React.useEffect(() => {
+    console.log(`🔄 Services ref updated: ${services.length} services`)
     servicesRef.current = services
   }, [services])
 
