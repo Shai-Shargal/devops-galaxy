@@ -40,6 +40,12 @@ function Services({
   // Setup animation loop
   useAnimation(containerRef, servicesRef, selectedServiceRef, planetsRef)
 
+  // Track prop changes
+  React.useEffect(() => {
+    console.log(`📊 SERVICES PROP CHANGED: Now ${services.length} services`)
+    console.log(`   IDs: ${services.map(s => s.id).join(', ')}`)
+  }, [services])
+
   // Keep services ref in sync
   React.useEffect(() => {
     console.log(`🔄 Services ref updated: ${services.length} services`)
