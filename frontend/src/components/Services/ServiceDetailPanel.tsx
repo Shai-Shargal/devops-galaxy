@@ -12,36 +12,43 @@
  * - Toggle edit mode
  */
 
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
+import type { Service } from '../../types'
 
 /**
  * Status text mapping
  */
-const STATUS_TEXT = {
+const STATUS_TEXT: Record<string, string> = {
   green: 'Healthy',
   orange: 'Running',
   red: 'Failed'
 }
 
 /**
+ * Props for ServiceDetailPanel component
+ */
+interface ServiceDetailPanelProps {
+  service: Service
+  dependencies: Service[]
+  dependents: Service[]
+  onClose: () => void
+  onUpdateService: (serviceId: string, updates: Partial<Service>) => void
+}
+
+/**
  * ServiceDetailPanel - Detail view of a selected service
  *
- * @param {object} props
- * @param {object} props.service - Selected service object
- * @param {array} props.dependencies - Services this one depends on
- * @param {array} props.dependents - Services that depend on this one
- * @param {function} props.onClose - Callback to close panel
- * @param {function} props.onUpdateService - Callback to save service changes
+ * Displays comprehensive service information and allows editing
  */
-function ServiceDetailPanel({
+const ServiceDetailPanel: FC<ServiceDetailPanelProps> = ({
   service,
   dependencies,
   dependents,
   onClose,
   onUpdateService
-}) {
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [editData, setEditData] = useState(null)
+}) => {
+  const [isEditMode, setIsEditMode] = useState<boolean>(false)
+  const [editData, setEditData] = useState<Partial<Service> | null>(null)
 
   const statusText = STATUS_TEXT[service.status] || 'Unknown'
   const latestRun = service.pipeline?.latestRun

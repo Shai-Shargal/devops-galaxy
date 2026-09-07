@@ -13,19 +13,50 @@
  * - Will save to database
  */
 
-import React, { useState } from 'react'
+import React, { useState, FC, ChangeEvent, FormEvent } from 'react'
+import type { NewServiceInput, ServiceStatus } from '../types'
 import './AddServiceModal.css'
 
-export default function AddServiceModal({ isOpen, onClose, onAddService }) {
-  const [formData, setFormData] = useState({
+/**
+ * Form data structure for new service creation
+ */
+interface FormData {
+  name: string
+  team: string
+  status: ServiceStatus
+}
+
+/**
+ * Form validation errors
+ */
+interface FormErrors {
+  [key: string]: string
+}
+
+/**
+ * Props for AddServiceModal component
+ */
+interface AddServiceModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onAddService: (service: NewServiceInput) => void
+}
+
+/**
+ * AddServiceModal - Modal form for creating new services
+ *
+ * Provides form validation and handles service creation
+ */
+const AddServiceModal: FC<AddServiceModalProps> = ({ isOpen, onClose, onAddService }) => {
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     team: '',
     status: 'green'
   })
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<FormErrors>({})
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -41,8 +72,8 @@ export default function AddServiceModal({ isOpen, onClose, onAddService }) {
     }
   }
 
-  const validateForm = () => {
-    const newErrors = {}
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {}
 
     if (!formData.name.trim()) {
       newErrors.name = 'Service name is required'
@@ -64,7 +95,7 @@ export default function AddServiceModal({ isOpen, onClose, onAddService }) {
     return newErrors
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
 
     const newErrors = validateForm()
@@ -86,7 +117,7 @@ export default function AddServiceModal({ isOpen, onClose, onAddService }) {
     onClose()
   }
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setFormData({ name: '', team: '', status: 'green' })
     setErrors({})
     onClose()
@@ -173,3 +204,5 @@ export default function AddServiceModal({ isOpen, onClose, onAddService }) {
     </>
   )
 }
+
+export default AddServiceModal
