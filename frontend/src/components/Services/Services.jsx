@@ -30,7 +30,11 @@ function Services({
   getDependencies,
   getDependents
 }) {
-  console.log(`🎬 Services MOUNTED - rendering ${services.length} services`)
+  console.log(`🎬 Services RENDER: services prop has ${services?.length} items`)
+  if (services && services.length > 0) {
+    console.log(`   First service: ${services[0].id}`)
+    console.log(`   Last service: ${services[services.length - 1].id}`)
+  }
 
   const containerRef = React.useRef(null)
   const selectedServiceRef = useRef(null)
