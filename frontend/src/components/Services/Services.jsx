@@ -80,12 +80,27 @@ function Services({
 
   console.log(`🎨 About to render ${services.length} ServicePlanet components`)
 
+  // EMERGENCY TEST: Does this div appear at all?
   return (
-    <div
-      ref={containerRef}
-      className="services-container"
-      onClick={handleContainerClick}
-    >
+    <>
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        left: '20px',
+        padding: '10px',
+        backgroundColor: 'yellow',
+        color: 'black',
+        zIndex: 10000,
+        fontSize: '14px',
+        fontWeight: 'bold'
+      }}>
+        🟡 SERVICES COMPONENT IS RENDERING! ({services.length} services)
+      </div>
+      <div
+        ref={containerRef}
+        className="services-container"
+        onClick={handleContainerClick}
+      >
       {/* DEBUG: Show all services as simple divs first */}
       {services.map((service, idx) => (
         <div
@@ -118,17 +133,18 @@ function Services({
         )
       })}
 
-      {/* Detail panel for selected service */}
-      {selectedService && (
-        <ServiceDetailPanel
-          service={selectedService}
-          dependencies={selectedDependencies}
-          dependents={selectedDependents}
-          onClose={clearSelection}
-          onUpdateService={updateService}
-        />
-      )}
-    </div>
+        {/* Detail panel for selected service */}
+        {selectedService && (
+          <ServiceDetailPanel
+            service={selectedService}
+            dependencies={selectedDependencies}
+            dependents={selectedDependents}
+            onClose={clearSelection}
+            onUpdateService={updateService}
+          />
+        )}
+      </div>
+    </>
   )
 }
 
