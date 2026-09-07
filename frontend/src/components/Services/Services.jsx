@@ -22,6 +22,8 @@ import './Services.css'
  * @param {Array} props.services - Services array from parent (App.jsx)
  */
 function Services({ services: propsServices }) {
+  console.log(`🎬 Services component MOUNTED/RENDERED, propsServices=${propsServices?.length || 0}`)
+
   const containerRef = React.useRef(null)
   const selectedServiceRef = useRef(null)
   const servicesRef = useRef([])
@@ -41,7 +43,7 @@ function Services({ services: propsServices }) {
   // Use services from props if provided, otherwise use hook
   const services = propsServices || hookServices
 
-  console.log(`📦 Services component rendered with ${services.length} services (from ${propsServices ? 'props' : 'hook'})`)
+  console.log(`📦 Services: Using ${services.length} services (from ${propsServices ? 'PROPS ✅' : 'HOOK ❌'})`)
 
   // Setup animation loop
   useAnimation(containerRef, servicesRef, selectedServiceRef, planetsRef)
@@ -84,6 +86,8 @@ function Services({ services: propsServices }) {
     }
   }, [])
 
+  console.log(`🎨 About to render ${services.length} ServicePlanet components`)
+
   return (
     <div
       ref={containerRef}
@@ -91,15 +95,18 @@ function Services({ services: propsServices }) {
       onClick={handleContainerClick}
     >
       {/* Render all service planets */}
-      {services.map((service) => (
-        <ServicePlanet
-          key={service.id}
-          service={service}
-          isSelected={selectedService?.id === service.id}
-          onSelect={selectService}
-          planetRef={(el) => setPlanetRef(service.id, el)}
-        />
-      ))}
+      {services.map((service) => {
+        console.log(`  → Rendering planet: ${service.id}`)
+        return (
+          <ServicePlanet
+            key={service.id}
+            service={service}
+            isSelected={selectedService?.id === service.id}
+            onSelect={selectService}
+            planetRef={(el) => setPlanetRef(service.id, el)}
+          />
+        )
+      })}
 
       {/* Detail panel for selected service */}
       {selectedService && (
