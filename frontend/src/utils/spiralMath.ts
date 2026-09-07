@@ -5,14 +5,16 @@
  * Separates math logic from React components.
  */
 
+import type { SpiralConfig, CalculatedPosition, ContainerCenter } from '../types'
+
 /**
  * Spiral configuration constants
- * Services positioned along logarithmic spiral arms
+ * Services positioned along Archimedean spiral
  */
-export const SPIRAL_CONFIG = {
+export const SPIRAL_CONFIG: SpiralConfig = {
   baseRadius: 70,          // Distance from center where spiral starts (pixels)
   maxRadialDistance: 150,  // Total radial growth across full spiral (pixels)
-  maxTheta: 20 * Math.PI   // Full spiral rotation extent (radians) - allows up to 33+ services
+  maxTheta: 20 * Math.PI   // Full spiral rotation extent (radians) - allows 30+ services
 }
 
 /**
@@ -25,13 +27,18 @@ export const SPIRAL_CONFIG = {
  *   theta = angle position on spiral
  *   rotation = animation rotation offset
  *
- * @param {number} theta - Position on spiral (0 to 8π)
- * @param {number} rotation - Current rotation angle (animation)
- * @param {number} centerX - X coordinate of galaxy center
- * @param {number} centerY - Y coordinate of galaxy center
- * @returns {object} Position {x, y} and metadata {r, angle}
+ * @param theta - Position on spiral (0 to 20π)
+ * @param rotation - Current rotation angle (animation)
+ * @param centerX - X coordinate of galaxy center
+ * @param centerY - Y coordinate of galaxy center
+ * @returns Position {x, y} and metadata {r, angle}
  */
-export function getSpirralPosition(theta, rotation, centerX, centerY) {
+export function getSpirralPosition(
+  theta: number,
+  rotation: number,
+  centerX: number,
+  centerY: number
+): CalculatedPosition {
   // Linear radial growth: keeps spiral tight and centered
   const r = SPIRAL_CONFIG.baseRadius +
     (theta / SPIRAL_CONFIG.maxTheta) * SPIRAL_CONFIG.maxRadialDistance
@@ -49,10 +56,11 @@ export function getSpirralPosition(theta, rotation, centerX, centerY) {
 
 /**
  * Calculate center point of a container
- * @param {HTMLElement} containerRef - Container element
- * @returns {object} Center coordinates {x, y} or null if invalid
+ *
+ * @param containerRef - Container element
+ * @returns Center coordinates {x, y} or null if invalid
  */
-export function getContainerCenter(containerRef) {
+export function getContainerCenter(containerRef: HTMLElement | null): ContainerCenter | null {
   if (!containerRef) return null
 
   const width = containerRef.offsetWidth

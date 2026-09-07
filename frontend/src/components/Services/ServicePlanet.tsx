@@ -8,51 +8,60 @@
  * This component only handles rendering and user events.
  */
 
-import React from 'react'
+import React, { FC, CSSProperties } from 'react'
+import type { Service } from '../../types'
 
 /**
  * Status to color mapping
  */
-const STATUS_COLORS = {
+const STATUS_COLORS: Record<string, string> = {
   green: '#10b981',   // Healthy
   orange: '#f59e0b',  // Running
   red: '#ef4444'      // Failed
 }
 
 /**
+ * Props for ServicePlanet component
+ */
+interface ServicePlanetProps {
+  service: Service
+  isSelected: boolean
+  onSelect: (serviceId: string) => void
+  planetRef: React.Ref<HTMLDivElement>
+}
+
+/**
  * ServicePlanet - Individual service dot in the galaxy
  *
- * @param {object} props
- * @param {object} props.service - Service data object
- * @param {boolean} props.isSelected - Whether this service is currently selected
- * @param {function} props.onSelect - Callback when service is clicked
- * @param {React.Ref} props.planetRef - Ref for DOM element (used by animation loop)
+ * Renders a small colored dot representing a service with status indication
  */
-function ServicePlanet({ service, isSelected, onSelect, planetRef }) {
+const ServicePlanet: FC<ServicePlanetProps> = ({ service, isSelected, onSelect, planetRef }) => {
   const statusColor = STATUS_COLORS[service.status] || '#64748b'
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation()
     onSelect(service.id)
   }
 
-  const handleMouseEnter = (e) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.currentTarget.classList.add('hovered')
   }
 
-  const handleMouseLeave = (e) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.currentTarget.classList.remove('hovered')
   }
+
+  const styles: CSSProperties = {
+    left: '0px',
+    top: '0px',
+    '--status-color': statusColor
+  } as CSSProperties
 
   return (
     <div
       ref={planetRef}
       className={`service-planet ${service.status} ${isSelected ? 'selected' : ''}`}
-      style={{
-        left: '0px',
-        top: '0px',
-        '--status-color': statusColor
-      }}
+      style={styles}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

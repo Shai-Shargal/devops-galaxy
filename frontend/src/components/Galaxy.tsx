@@ -1,10 +1,19 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, FC } from 'react'
 import './Galaxy.css'
+
+declare global {
+  interface Window {
+    Galaxy: {
+      create: (type: string, container: HTMLElement, config: Record<string, unknown>) => unknown
+    }
+    galaxyInstance: unknown
+  }
+}
 
 /**
  * Galaxy Component
  *
- * Wraps the GalaxyJS library to render an interactive spiral galaxy.
+ * Wraps the GalaxyJS library to render an interactive starcluster galaxy.
  * This component handles:
  * - Rendering the galaxy visualization
  * - Initializing GalaxyJS with appropriate settings
@@ -13,10 +22,10 @@ import './Galaxy.css'
  * The galaxy itself is purely visual/environmental.
  * Services have their own animation loop synchronized to the same speed.
  */
-export default function Galaxy() {
-  const containerRef = useRef(null)
+const Galaxy: FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null)
 
-   useEffect(() => {
+  useEffect(() => {
     // Initialize GalaxyJS when component mounts
     if (containerRef.current && window.Galaxy) {
       // Create a star cluster galaxy (globe-like rotation)
@@ -33,14 +42,13 @@ export default function Galaxy() {
         count: 1000          // Total particles in field (background stars)
       })
 
-
       console.log('✨ GalaxyJS initialized')
 
       // Expose to window for debugging
       window.galaxyInstance = galaxy
 
       // Handle window resize
-      const handleResize = () => {
+      const handleResize = (): void => {
         console.log('Window resized - GalaxyJS handles it automatically')
       }
 
@@ -58,3 +66,5 @@ export default function Galaxy() {
     </div>
   )
 }
+
+export default Galaxy

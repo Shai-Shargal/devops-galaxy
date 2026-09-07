@@ -1,11 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import Galaxy from './components/Galaxy'
 import Services from './components/Services/Services'
 import AddServiceModal from './components/AddServiceModal'
 import { useServices, useServiceStats } from './hooks/useServices'
+import type { NewServiceInput } from './types'
 import './App.css'
 
-export default function App() {
+/**
+ * App - Main application component
+ *
+ * Manages:
+ * - Global service state (via useServices hook)
+ * - Add service modal state
+ * - Service stats calculation
+ * - Main layout and header/footer
+ */
+const App: FC = () => {
   const {
     services,
     loading,
@@ -19,7 +29,15 @@ export default function App() {
     getDependents
   } = useServices()
   const stats = useServiceStats(services)
-  const [isAddServiceModalOpen, setIsAddServiceModalOpen] = useState(false)
+  const [isAddServiceModalOpen, setIsAddServiceModalOpen] = useState<boolean>(false)
+
+  /**
+   * Handle adding a new service from the modal
+   */
+  const handleAddService = (newService: NewServiceInput): void => {
+    addService(newService)
+    setIsAddServiceModalOpen(false)
+  }
 
   return (
     <div className="app">
@@ -87,8 +105,10 @@ export default function App() {
       <AddServiceModal
         isOpen={isAddServiceModalOpen}
         onClose={() => setIsAddServiceModalOpen(false)}
-        onAddService={addService}
+        onAddService={handleAddService}
       />
     </div>
   )
 }
+
+export default App
