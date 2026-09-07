@@ -84,6 +84,8 @@ export function useServices() {
 
   // Add a new service with proper defaults
   const addService = useCallback((newService) => {
+    console.log('🔧 addService called with:', newService)
+
     // Generate a theta position spread around the spiral
     // Find the max theta from existing services and add ~0.5 radians
     const maxTheta = services.length > 0
@@ -91,9 +93,13 @@ export function useServices() {
       : 0
     const newTheta = (maxTheta + 0.6) % (8 * Math.PI)
 
+    console.log(`📍 Calculated theta position: ${newTheta.toFixed(2)} (maxTheta: ${maxTheta.toFixed(2)})`)
+
     // Create a slug-like ID from service name
     const serviceId = newService.id ||
       `service-${newService.name?.toLowerCase().replace(/\s+/g, '-') || Date.now()}`
+
+    console.log(`🆔 Service ID: ${serviceId}`)
 
     // Default pipeline data for new services
     const defaultPipeline = {
@@ -146,7 +152,13 @@ export function useServices() {
       pipeline: newService.pipeline || defaultPipeline
     }
 
-    setServices(prev => [...prev, serviceWithDefaults])
+    console.log(`✅ Adding service to galaxy:`, serviceWithDefaults)
+    console.log(`📊 Total services before: ${services.length}, after: ${services.length + 1}`)
+
+    setServices(prev => {
+      console.log(`📈 Services state updated. New count: ${prev.length + 1}`)
+      return [...prev, serviceWithDefaults]
+    })
   }, [services])
 
   // Delete a service (future implementation)
