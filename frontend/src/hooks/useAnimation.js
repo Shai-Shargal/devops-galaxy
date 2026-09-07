@@ -69,6 +69,11 @@ export function useAnimation(containerRef, servicesRef, selectedServiceRef, plan
         servicesRef.current.forEach(service => {
           const planetElement = planetsRef.current[service.id]
 
+          // Log if service ref is missing
+          if (!planetElement) {
+            console.warn(`⚠️ Missing ref for service: ${service.id}`)
+          }
+
           // Only update if element exists and is in DOM
           if (planetElement?.isConnected) {
             // Calculate position on spiral

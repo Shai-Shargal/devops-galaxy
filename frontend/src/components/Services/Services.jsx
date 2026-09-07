@@ -72,8 +72,11 @@ function Services({
   // Store planet element refs
   const setPlanetRef = useCallback((serviceId, element) => {
     if (element) {
+      console.log(`📌 Registering ref for: ${serviceId}`)
       planetsRef.current[serviceId] = element
+      console.log(`   Total refs now: ${Object.keys(planetsRef.current).length}`)
     } else {
+      console.log(`🗑️ Removing ref for: ${serviceId}`)
       delete planetsRef.current[serviceId]
     }
   }, [])
