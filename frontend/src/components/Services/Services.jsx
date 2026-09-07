@@ -86,6 +86,24 @@ function Services({
       className="services-container"
       onClick={handleContainerClick}
     >
+      {/* DEBUG: Show all services as simple divs first */}
+      {services.map((service, idx) => (
+        <div
+          key={`debug-${service.id}`}
+          style={{
+            position: 'absolute',
+            left: `${50 + idx * 30}px`,
+            top: `${50 + idx * 20}px`,
+            width: '20px',
+            height: '20px',
+            backgroundColor: service.status === 'green' ? 'lime' : service.status === 'orange' ? 'orange' : 'red',
+            borderRadius: '50%',
+            zIndex: 999
+          }}
+          title={`${service.id} (DEBUG)`}
+        />
+      ))}
+
       {/* Render all service planets */}
       {services.map((service) => {
         console.log(`  → Rendering planet: ${service.id}`)
