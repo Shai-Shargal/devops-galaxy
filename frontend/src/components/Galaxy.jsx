@@ -19,17 +19,18 @@ export default function Galaxy() {
    useEffect(() => {
     // Initialize GalaxyJS when component mounts
     if (containerRef.current && window.Galaxy) {
-      // Create the spiral galaxy
-      const galaxy = window.Galaxy.create('spiral', containerRef.current, {
-        speed: 0.5,           // Rotation speed
-        stars: 600,           // Number of particles/stars
+      // Create a star cluster galaxy (globe-like rotation)
+      // Rotates right-to-left like a globe, easier to synchronize with service planets
+      const galaxy = window.Galaxy.create('starcluster', containerRef.current, {
+        speed: 0.15,          // Rotation speed (matched to service animation speed)
+        stars: 1000,          // Number of particles/stars in cluster
         colors: [             // Particle colors
           '#ffffff',          // White
           '#9bd0ff',          // Light blue
           '#c9b8ff'           // Light purple
         ],
         size: 2,              // Particle size
-        count: 8000           // Total particles in field (background stars)
+        count: 15000          // Total particles in field (background stars)
       })
 
 
