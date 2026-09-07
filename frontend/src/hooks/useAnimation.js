@@ -20,7 +20,7 @@ import { getSpirralPosition, getContainerCenter } from '../utils/spiralMath'
  * Synchronized with GalaxyJS starcluster rotation
  */
 const ANIMATION_CONFIG = {
-  rotationSpeed: 0.001  // Radians per frame (slow, synchronized with galaxy)
+  rotationSpeed: 0.008 // Radians per frame (slow but visible rotation)
 }
 
 /**

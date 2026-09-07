@@ -91,9 +91,9 @@ export function useServices() {
       : 0
     const newTheta = (maxTheta + 0.6) % (8 * Math.PI)
 
-    // Create a slug-like ID from service name
+    // Create a unique ID - use name + timestamp to avoid duplicates
     const serviceId = newService.id ||
-      `service-${newService.name?.toLowerCase().replace(/\s+/g, '-') || Date.now()}`
+      `${newService.name?.toLowerCase().replace(/\s+/g, '-') || 'service'}-${Date.now()}`
 
     // Default pipeline data for new services
     const defaultPipeline = {
