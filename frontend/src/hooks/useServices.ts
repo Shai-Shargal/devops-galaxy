@@ -15,6 +15,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { MOCK_SERVICES } from '../data/mockServices'
+import type { Service, NewServiceInput, UseServicesReturn, ServiceStats } from '../types'
 
 /**
  * Custom hook for services state and operations
@@ -24,31 +25,32 @@ import { MOCK_SERVICES } from '../data/mockServices'
  * - selectedService: Currently selected service (for detail panel)
  * - selectService: Function to select a service
  * - clearSelection: Function to clear selection
- * - updateService: Function to update a service (future)
- * - addService: Function to add a service (future)
- * - deleteService: Function to delete a service (future)
+ * - updateService: Function to update a service
+ * - addService: Function to add a service
+ * - deleteService: Function to delete a service
  * - loading: Loading state
  * - error: Error state
  */
-export function useServices() {
-  const [services, setServices] = useState([])
-  const [selectedService, setSelectedService] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+export function useServices(): UseServicesReturn {
+  const [services, setServices] = useState<Service[]>([])
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   // Initialize services (currently from mock data)
   // Future: will fetch from backend API
   useEffect(() => {
-    const loadServices = async () => {
+    const loadServices = async (): Promise<void> => {
       try {
         setLoading(true)
         // For now: use mock data
         // Future: const response = await fetch('/api/services')
         // Future: const data = await response.json()
-        setServices(MOCK_SERVICES)
+        setServices(MOCK_SERVICES as Service[])
         setError(null)
       } catch (err) {
-        setError(err.message)
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+        setError(errorMessage)
         console.error('Error loading services:', err)
       } finally {
         setLoading(false)
@@ -59,18 +61,18 @@ export function useServices() {
   }, [])
 
   // Select a service for detail view
-  const selectService = useCallback((serviceId) => {
+  const selectService = useCallback((serviceId: string): void => {
     const service = services.find(s => s.id === serviceId)
     setSelectedService(service || null)
   }, [services])
 
   // Clear service selection
-  const clearSelection = useCallback(() => {
+  const clearSelection = useCallback((): void => {
     setSelectedService(null)
   }, [])
 
-  // Update a service (future implementation)
-  const updateService = useCallback((serviceId, updates) => {
+  // Update a service
+  const updateService = useCallback((serviceId: string, updates: Partial<Service>): void => {
     setServices(prevServices =>
       prevServices.map(s =>
         s.id === serviceId ? { ...s, ...updates } : s
@@ -78,12 +80,12 @@ export function useServices() {
     )
     // If the selected service was updated, update selection too
     if (selectedService?.id === serviceId) {
-      setSelectedService(prev => ({ ...prev, ...updates }))
+      setSelectedService(prev => prev ? { ...prev, ...updates } : null)
     }
   }, [selectedService])
 
   // Add a new service with proper defaults
-  const addService = useCallback((newService) => {
+  const addService = useCallback((newService: NewServiceInput): void => {
     // Generate a theta position spread around the spiral
     // Find the max theta from existing services and add ~0.5 radians
     const maxTheta = services.length > 0
@@ -130,7 +132,7 @@ export function useServices() {
       }
     }
 
-    const serviceWithDefaults = {
+    const serviceWithDefaults: Service = {
       id: serviceId,
       name: newService.name || 'Untitled Service',
       description: newService.description || 'Mock service created for demonstration',
@@ -149,8 +151,8 @@ export function useServices() {
     setServices(prev => [...prev, serviceWithDefaults])
   }, [services])
 
-  // Delete a service (future implementation)
-  const deleteService = useCallback((serviceId) => {
+  // Delete a service
+  const deleteService = useCallback((serviceId: string): void => {
     setServices(prev => prev.filter(s => s.id !== serviceId))
     if (selectedService?.id === serviceId) {
       setSelectedService(null)
@@ -158,19 +160,21 @@ export function useServices() {
   }, [selectedService])
 
   // Get service by ID
-  const getServiceById = useCallback((serviceId) => {
+  const getServiceById = useCallback((serviceId: string): Service | undefined => {
     return services.find(s => s.id === serviceId)
   }, [services])
 
   // Get dependencies for a service
-  const getDependencies = useCallback((serviceId) => {
+  const getDependencies = useCallback((serviceId: string): Service[] => {
     const service = getServiceById(serviceId)
     if (!service) return []
-    return service.dependencies.map(depId => getServiceById(depId)).filter(Boolean)
+    return service.dependencies
+      .map(depId => getServiceById(depId))
+      .filter((service): service is Service => service !== undefined)
   }, [getServiceById])
 
   // Get dependents (services that depend on this one)
-  const getDependents = useCallback((serviceId) => {
+  const getDependents = useCallback((serviceId: string): Service[] => {
     return services.filter(s => s.dependencies.includes(serviceId))
   }, [services])
 
@@ -200,7 +204,7 @@ export function useServices() {
 /**
  * Hook for getting service statistics
  */
-export function useServiceStats(services) {
+export function useServiceStats(services: Service[]): ServiceStats {
   return {
     total: services.length,
     healthy: services.filter(s => s.status === 'green').length,

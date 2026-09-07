@@ -13,28 +13,39 @@
  */
 
 import { useEffect, useRef } from 'react'
+import type { AnimationConfig } from '../types'
+import type { Service } from '../types'
 import { getSpirralPosition, getContainerCenter } from '../utils/spiralMath'
 
 /**
  * Animation configuration
  * Synchronized with GalaxyJS starcluster rotation
  */
-const ANIMATION_CONFIG = {
+const ANIMATION_CONFIG: AnimationConfig = {
   rotationSpeed: 0.008 // Radians per frame (slow but visible rotation)
+}
+
+interface AnimationRefs {
+  rotationRef: React.MutableRefObject<number>
+  animationIdRef: React.MutableRefObject<number | null>
 }
 
 /**
  * Hook for managing planet animation
  *
- * @param {React.RefObject} containerRef - Container element reference
- * @param {React.MutableRefObject} servicesRef - Services array reference
- * @param {React.MutableRefObject} selectedServiceRef - Selected service reference
- * @param {React.MutableRefObject} planetsRef - Planet DOM elements reference
- * @returns {void}
+ * @param containerRef - Container element reference
+ * @param servicesRef - Services array reference
+ * @param selectedServiceRef - Selected service reference
+ * @param planetsRef - Planet DOM elements reference
  */
-export function useAnimation(containerRef, servicesRef, selectedServiceRef, planetsRef) {
-  const rotationRef = useRef(0)
-  const animationIdRef = useRef(null)
+export function useAnimation(
+  containerRef: React.RefObject<HTMLDivElement>,
+  servicesRef: React.MutableRefObject<Service[]>,
+  selectedServiceRef: React.MutableRefObject<Service | null>,
+  planetsRef: React.MutableRefObject<Record<string, HTMLElement>>
+): AnimationRefs {
+  const rotationRef = useRef<number>(0)
+  const animationIdRef = useRef<number | null>(null)
 
   useEffect(() => {
     /**
