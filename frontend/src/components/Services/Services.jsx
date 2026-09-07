@@ -21,8 +21,9 @@ import './Services.css'
  *
  * @param {Array} props.services - Services array from parent (App.jsx)
  */
-function Services({ services: propsServices }) {
-  console.log(`🎬 Services component MOUNTED/RENDERED, propsServices=${propsServices?.length || 0}`)
+function Services(props) {
+  console.log(`🎬 Services FULL PROPS:`, props)
+  console.log(`🎬 Services propsServices=${props.services?.length || 'UNDEFINED'}`)
 
   const containerRef = React.useRef(null)
   const selectedServiceRef = useRef(null)
@@ -41,6 +42,7 @@ function Services({ services: propsServices }) {
   } = useServices()
 
   // Use services from props if provided, otherwise use hook
+  const propsServices = props.services
   const services = propsServices || hookServices
 
   console.log(`📦 Services: Using ${services.length} services (from ${propsServices ? 'PROPS ✅' : 'HOOK ❌'})`)
