@@ -13,17 +13,9 @@
  */
 
 import { useEffect, useRef } from 'react'
-import type { AnimationConfig } from '../types'
-import type { Service } from '../types'
-import { getSpirralPosition, getContainerCenter } from '../utils/spiralMath'
-
-/**
- * Animation configuration
- * Synchronized with GalaxyJS starcluster rotation
- */
-const ANIMATION_CONFIG: AnimationConfig = {
-  rotationSpeed: 0.008 // Radians per frame (slow but visible rotation)
-}
+import { ANIMATION_CONFIG } from '@config'
+import type { Service } from '@types'
+import { getSpirralPosition, getContainerCenter } from '@utils/spiralMath'
 
 interface AnimationRefs {
   rotationRef: React.MutableRefObject<number>
@@ -56,7 +48,7 @@ export function useAnimation(
     const animate = () => {
       // Only rotate if detail panel is closed
       if (!selectedServiceRef.current) {
-        rotationRef.current += ANIMATION_CONFIG.rotationSpeed
+        rotationRef.current += ANIMATION_CONFIG.ROTATION_SPEED
       }
 
       // Get current container center (recalculated every frame)

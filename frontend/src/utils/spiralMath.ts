@@ -3,31 +3,24 @@
  *
  * Handles all calculations for positioning services on the spiral galaxy.
  * Separates math logic from React components.
+ *
+ * Configuration imported from centralized config layer.
  */
 
-import type { SpiralConfig, CalculatedPosition, ContainerCenter } from '../types'
-
-/**
- * Spiral configuration constants
- * Services positioned along Archimedean spiral
- */
-export const SPIRAL_CONFIG: SpiralConfig = {
-  baseRadius: 70,          // Distance from center where spiral starts (pixels)
-  maxRadialDistance: 150,  // Total radial growth across full spiral (pixels)
-  maxTheta: 20 * Math.PI   // Full spiral rotation extent (radians) - allows 30+ services
-}
+import { SPIRAL_CONFIG } from '@config'
+import type { CalculatedPosition, ContainerCenter } from '@types'
 
 /**
  * Calculate position on spiral given theta and rotation angle
  *
  * Uses Archimedean spiral: r = a + b*theta
  * Where:
- *   a = baseRadius (starting distance from center)
+ *   a = BASE_RADIUS (starting distance from center)
  *   b = growth rate (how fast it expands outward)
  *   theta = angle position on spiral
  *   rotation = animation rotation offset
  *
- * @param theta - Position on spiral (0 to 20π)
+ * @param theta - Position on spiral (0 to maxTheta)
  * @param rotation - Current rotation angle (animation)
  * @param centerX - X coordinate of galaxy center
  * @param centerY - Y coordinate of galaxy center
@@ -40,8 +33,7 @@ export function getSpirralPosition(
   centerY: number
 ): CalculatedPosition {
   // Linear radial growth: keeps spiral tight and centered
-  const r = SPIRAL_CONFIG.baseRadius +
-    (theta / SPIRAL_CONFIG.maxTheta) * SPIRAL_CONFIG.maxRadialDistance
+  const r = SPIRAL_CONFIG.BASE_RADIUS + (theta / SPIRAL_CONFIG.MAX_THETA) * SPIRAL_CONFIG.MAX_RADIAL_DISTANCE
 
   // Combine theta position with animation rotation
   const angle = theta + rotation

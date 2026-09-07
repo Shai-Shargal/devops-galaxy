@@ -29,7 +29,11 @@
       "@hooks/*": ["./src/hooks/*"],
       "@utils/*": ["./src/utils/*"],
       "@data/*": ["./src/data/*"],
-      "@types/*": ["./src/types/*"]
+      "@types/*": ["./src/types/*"],
+      "@services/*": ["./src/services/*"],
+      "@config/*": ["./src/config/*"],
+      "@errors/*": ["./src/errors/*"],
+      "@validation/*": ["./src/validation/*"]
     }
   },
   "include": ["src"],
