@@ -54,7 +54,7 @@ export default function App() {
 
       <main className="main">
         <Galaxy />
-        {!loading && !error && <Services />}
+        {!loading && !error && <Services services={services} />}
         {loading && <div className="loading">Loading services...</div>}
         {error && <div className="error">Error loading services: {error}</div>}
       </main>

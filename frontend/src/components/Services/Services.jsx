@@ -18,16 +18,18 @@ import './Services.css'
 
 /**
  * Services - Main container for service planets
+ *
+ * @param {Array} props.services - Services array from parent (App.jsx)
  */
-function Services() {
+function Services({ services: propsServices }) {
   const containerRef = React.useRef(null)
   const selectedServiceRef = useRef(null)
   const servicesRef = useRef([])
   const planetsRef = useRef({}) // Maps service.id → DOM element
 
-  // Get services from hook
+  // Get selection methods from hook (but use services from props)
   const {
-    services,
+    services: hookServices,
     selectedService,
     selectService,
     clearSelection,
@@ -35,6 +37,9 @@ function Services() {
     getDependencies,
     getDependents
   } = useServices()
+
+  // Use services from props if provided, otherwise use hook
+  const services = propsServices || hookServices
 
   // Setup animation loop
   useAnimation(containerRef, servicesRef, selectedServiceRef, planetsRef)
