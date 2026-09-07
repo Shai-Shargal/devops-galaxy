@@ -14,7 +14,7 @@ import { useServices } from '../../hooks/useServices'
 import { useAnimation } from '../../hooks/useAnimation'
 import ServicePlanet from './ServicePlanet'
 import ServiceDetailPanel from './ServiceDetailPanel'
-import './Services.css'
+import '../Services.css'
 
 /**
  * Services - Main container for service planets
