@@ -11,8 +11,8 @@
  */
 export const SPIRAL_CONFIG = {
   baseRadius: 70,          // Distance from center where spiral starts (pixels)
-  maxRadialDistance: 100,  // Total radial growth across full spiral (pixels)
-  maxTheta: 8 * Math.PI    // Full spiral rotation extent (radians)
+  maxRadialDistance: 150,  // Total radial growth across full spiral (pixels)
+  maxTheta: 20 * Math.PI   // Full spiral rotation extent (radians) - allows up to 33+ services
 }
 
 /**
