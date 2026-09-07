@@ -6,7 +6,18 @@ import { useServices, useServiceStats } from './hooks/useServices'
 import './App.css'
 
 export default function App() {
-  const { services, loading, error, addService } = useServices()
+  const {
+    services,
+    loading,
+    error,
+    addService,
+    selectedService,
+    selectService,
+    clearSelection,
+    updateService,
+    getDependencies,
+    getDependents
+  } = useServices()
   const stats = useServiceStats(services)
   const [isAddServiceModalOpen, setIsAddServiceModalOpen] = useState(false)
 
@@ -56,7 +67,17 @@ export default function App() {
 
       <main className="main">
         <Galaxy />
-        {!loading && !error && <Services services={services} />}
+        {!loading && !error && (
+          <Services
+            services={services}
+            selectedService={selectedService}
+            selectService={selectService}
+            clearSelection={clearSelection}
+            updateService={updateService}
+            getDependencies={getDependencies}
+            getDependents={getDependents}
+          />
+        )}
         {loading && <div className="loading">Loading services...</div>}
         {error && <div className="error">Error loading services: {error}</div>}
       </main>

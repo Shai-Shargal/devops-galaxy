@@ -21,31 +21,21 @@ import './Services.css'
  *
  * @param {Array} props.services - Services array from parent (App.jsx)
  */
-function Services(props) {
-  console.log(`🎬 Services FULL PROPS:`, props)
-  console.log(`🎬 Services propsServices=${props.services?.length || 'UNDEFINED'}`)
+function Services({
+  services,
+  selectedService,
+  selectService,
+  clearSelection,
+  updateService,
+  getDependencies,
+  getDependents
+}) {
+  console.log(`🎬 Services MOUNTED - rendering ${services.length} services`)
 
   const containerRef = React.useRef(null)
   const selectedServiceRef = useRef(null)
   const servicesRef = useRef([])
   const planetsRef = useRef({}) // Maps service.id → DOM element
-
-  // Get selection methods from hook (but use services from props)
-  const {
-    services: hookServices,
-    selectedService,
-    selectService,
-    clearSelection,
-    updateService,
-    getDependencies,
-    getDependents
-  } = useServices()
-
-  // Use services from props if provided, otherwise use hook
-  const propsServices = props.services
-  const services = propsServices || hookServices
-
-  console.log(`📦 Services: Using ${services.length} services (from ${propsServices ? 'PROPS ✅' : 'HOOK ❌'})`)
 
   // Setup animation loop
   useAnimation(containerRef, servicesRef, selectedServiceRef, planetsRef)
