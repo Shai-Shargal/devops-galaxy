@@ -30,10 +30,7 @@
 }
 
 .header-title p {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
-  letter-spacing: 0.3px;
+  display: none;
 }
 
 .header-stats {
