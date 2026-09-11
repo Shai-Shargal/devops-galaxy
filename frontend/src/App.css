@@ -21,12 +21,32 @@
   gap: 24px;
 }
 
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .header-title h1 {
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.5px;
   margin: 0 0 2px 0;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title h1::before {
+  content: '';
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 70 Q50 30 70 30 Q85 30 85 45 Q85 60 70 60 Q50 60 30 30 Q15 30 15 45 Q15 60 30 60"/><circle cx="72" cy="28" r="4" fill="white"/><circle cx="15" cy="48" r="4" fill="white"/><circle cx="85" cy="58" r="3" fill="white"/><circle cx="48" cy="18" r="2.5" fill="white"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .header-title p {
