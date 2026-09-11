@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react'
+import { useState, FC } from 'react'
 import Galaxy from './components/Galaxy'
 import Services from './components/Services/Services'
 import AddServiceModal from './components/AddServiceModal'

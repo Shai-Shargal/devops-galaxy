@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, FC } from 'react'
+import { useEffect, useRef, FC } from 'react'
 import './Galaxy.css'
 
 declare global {

@@ -13,7 +13,7 @@
  * - Will save to database
  */
 
-import React, { useState, FC, ChangeEvent, FormEvent } from 'react'
+import { useState, FC, ChangeEvent, FormEvent } from 'react'
 import type { NewServiceInput, ServiceStatus } from '../types'
 import './AddServiceModal.css'
 

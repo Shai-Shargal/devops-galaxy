@@ -12,7 +12,7 @@
  * - Toggle edit mode
  */
 
-import React, { useState, FC } from 'react'
+import { useState, FC } from 'react'
 import type { Service } from '../../types'
 
 /**
