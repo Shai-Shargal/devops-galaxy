@@ -40,13 +40,14 @@
 
 .header-title h1::before {
   content: '';
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><style>path{stroke:white;fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}</style></defs><path d="M 35 85 Q 60 25 85 25 Q 100 25 105 40 Q 110 55 85 60 Q 60 65 35 25 Q 20 25 15 40 Q 10 55 35 60"/><circle cx="88" cy="20" r="5" fill="white"/><circle cx="10" cy="45" r="5" fill="white"/><circle cx="105" cy="65" r="4" fill="white"/><circle cx="60" cy="12" r="3" fill="white"/></svg>');
+  background-image: url('./assets/logo.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  opacity: 0.95;
 }
 
 .header-title p {
