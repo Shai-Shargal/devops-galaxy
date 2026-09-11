@@ -179,7 +179,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid #2d3748;
   flex-shrink: 0;
 }
 
@@ -223,7 +223,7 @@
 
 .btn-edit {
   background: none;
-  border: 1px solid #374151;
+  border: 1px solid #2d3748;
   color: #9ca3af;
   font-size: 13px;
   font-weight: 500;
@@ -289,7 +289,7 @@
   color: #e5e7eb;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid #2d3748;
   padding-bottom: 8px;
 }
 
@@ -428,7 +428,7 @@
 /* Detail Footer */
 .detail-footer {
   padding-top: 12px;
-  border-top: 1px solid #374151;
+  border-top: 1px solid #2d3748;
   font-size: 11px;
   color: #6b7280;
   text-align: right;
@@ -489,7 +489,7 @@
   padding: 10px;
   font-size: 13px;
   background-color: #111827;
-  border: 1px solid #374151;
+  border: 1px solid #2d3748;
   border-radius: 4px;
   color: #e5e7eb;
   font-family: inherit;
@@ -548,7 +548,7 @@
   gap: 12px;
   justify-content: flex-end;
   padding-top: 8px;
-  border-top: 1px solid #374151;
+  border-top: 1px solid #2d3748;
 }
 
 .btn-save,
