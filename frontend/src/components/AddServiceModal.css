@@ -28,9 +28,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  box-shadow: none;
   z-index: 2000;
   max-width: 500px;
   width: 90%;
