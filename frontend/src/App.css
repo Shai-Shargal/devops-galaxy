@@ -43,7 +43,7 @@
   width: 28px;
   height: 28px;
   flex-shrink: 0;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 70 Q50 30 70 30 Q85 30 85 45 Q85 60 70 60 Q50 60 30 30 Q15 30 15 45 Q15 60 30 60"/><circle cx="72" cy="28" r="4" fill="white"/><circle cx="15" cy="48" r="4" fill="white"/><circle cx="85" cy="58" r="3" fill="white"/><circle cx="48" cy="18" r="2.5" fill="white"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><style>path{stroke:white;fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}</style></defs><path d="M 35 85 Q 60 25 85 25 Q 100 25 105 40 Q 110 55 85 60 Q 60 65 35 25 Q 20 25 15 40 Q 10 55 35 60"/><circle cx="88" cy="20" r="5" fill="white"/><circle cx="10" cy="45" r="5" fill="white"/><circle cx="105" cy="65" r="4" fill="white"/><circle cx="60" cy="12" r="3" fill="white"/></svg>');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
