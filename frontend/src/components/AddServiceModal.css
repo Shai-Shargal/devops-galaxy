@@ -165,35 +165,35 @@
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 500;
-  border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: all 150ms ease;
 }
 
 .btn-submit {
-  background-color: #9bd0ff;
-  color: #0f172a;
+  background-color: #6b7280;
+  color: white;
+  border: none;
 }
 
 .btn-submit:hover {
-  background-color: #c9b8ff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(155, 208, 255, 0.3);
+  background-color: #4b5563;
 }
 
 .btn-submit:active {
-  transform: translateY(0);
+  background-color: #374151;
 }
 
 .btn-cancel {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: transparent;
   color: #d1d5db;
+  border: 1px solid #4b5563;
 }
 
 .btn-cancel:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: #6b7280;
+  color: #e5e7eb;
 }
 
 /* Modal Info */
