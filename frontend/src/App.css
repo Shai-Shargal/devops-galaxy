@@ -40,8 +40,8 @@
 
 .header-title h1::before {
   content: '';
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
   background-image: url('./assets/logo.png');
   background-size: contain;
