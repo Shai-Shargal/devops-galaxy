@@ -22,16 +22,18 @@
 }
 
 .header-title h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0 0 2px 0;
+  line-height: 1.2;
 }
 
 .header-title p {
   font-size: 14px;
-  color: #9ca3af;
+  color: #6b7280;
   margin: 0;
+  letter-spacing: 0.3px;
 }
 
 .header-stats {
