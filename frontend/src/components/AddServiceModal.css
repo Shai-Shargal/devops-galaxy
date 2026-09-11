@@ -126,9 +126,9 @@
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #9bd0ff;
-  box-shadow: 0 0 0 3px rgba(155, 208, 255, 0.1);
-  background-color: rgba(155, 208, 255, 0.05);
+  border-color: #6b7280;
+  box-shadow: none;
+  background-color: transparent;
 }
 
 .form-group input.error {
@@ -136,8 +136,8 @@
 }
 
 .form-group input.error:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-  background-color: rgba(239, 68, 68, 0.05);
+  box-shadow: none;
+  background-color: transparent;
 }
 
 .error-message {
