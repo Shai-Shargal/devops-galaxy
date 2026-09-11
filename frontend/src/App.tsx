@@ -98,9 +98,7 @@ const App: FC = () => {
         {error && <div className="error">Error loading services: {error}</div>}
       </main>
 
-      <footer className="footer">
-        <p>Level 1: Mock Data | Powered by GalaxyJS</p>
-      </footer>
+      <footer className="footer"></footer>
 
       <AddServiceModal
         isOpen={isAddServiceModalOpen}
