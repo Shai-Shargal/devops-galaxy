@@ -24,7 +24,7 @@
 .header-title {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0;
 }
 
 .header-title h1 {
