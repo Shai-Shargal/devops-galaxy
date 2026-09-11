@@ -11,7 +11,7 @@
  * Users can edit mock pipeline data to experiment with different scenarios.
  */
 
-import type { Service } from '../types'
+import type { Service, Stages, ServiceStatus as StageStatusType, StageStatus } from '../types'
 
 /**
  * Generate deterministic random number based on a string
@@ -140,7 +140,7 @@ export const MOCK_SERVICES: Service[] = [
         duration: null,
         stages: {
           build: { status: 'passed', duration: 320 },
-          test: { status: 'running', duration: null },
+          test: { status: 'running', duration: 0 },
           deploy: { status: 'skipped', duration: 0 }
         }
       },
@@ -200,7 +200,7 @@ export const MOCK_SERVICES: Service[] = [
     description: 'Payment processing and transaction handling',
     team: 'Payments Team',
     repository: 'https://github.com/company/payment-service',
-    dataSource: 'jenkins',
+    dataSource: 'github',
     position: {
       theta: 6.2
     },
@@ -292,14 +292,14 @@ export const STAGE_STATUS = {
 /**
  * Helper: Get service by ID
  */
-export function getServiceById(id) {
+export function getServiceById(id: string): Service | undefined {
   return MOCK_SERVICES.find(s => s.id === id)
 }
 
 /**
  * Helper: Get all dependencies for a service
  */
-export function getServiceDependencies(serviceId) {
+export function getServiceDependencies(serviceId: string): string[] {
   const service = getServiceById(serviceId)
   return service ? service.dependencies : []
 }
@@ -307,25 +307,25 @@ export function getServiceDependencies(serviceId) {
 /**
  * Helper: Get all services that depend on a given service
  */
-export function getDependentsOf(serviceId) {
+export function getDependentsOf(serviceId: string): Service[] {
   return MOCK_SERVICES.filter(s => s.dependencies.includes(serviceId))
 }
 
 /**
  * Helper: Calculate overall status based on pipeline stages
  */
-export function calculateStatus(stages) {
-  if (!stages) return SERVICE_STATUS.RED
+export function calculateStatus(stages: Stages | undefined): StageStatusType {
+  if (!stages) return SERVICE_STATUS.RED as StageStatusType
 
   const stageValues = Object.values(stages)
 
-  if (stageValues.some(s => s.status === STAGE_STATUS.FAILED)) {
-    return SERVICE_STATUS.RED
+  if (stageValues.some((s: any) => s.status === STAGE_STATUS.FAILED)) {
+    return SERVICE_STATUS.RED as StageStatusType
   }
 
-  if (stageValues.some(s => s.status === STAGE_STATUS.RUNNING)) {
-    return SERVICE_STATUS.ORANGE
+  if (stageValues.some((s: any) => s.status === STAGE_STATUS.RUNNING)) {
+    return SERVICE_STATUS.ORANGE as StageStatusType
   }
 
-  return SERVICE_STATUS.GREEN
+  return SERVICE_STATUS.GREEN as StageStatusType
 }
