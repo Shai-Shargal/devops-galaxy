@@ -31,7 +31,7 @@ interface AnimationRefs {
  * @param planetsRef - Planet DOM elements reference
  */
 export function useAnimation(
-  containerRef: React.RefObject<HTMLDivElement>,
+  containerRef: React.RefObject<HTMLDivElement | null>,
   servicesRef: React.MutableRefObject<Service[]>,
   selectedServiceRef: React.MutableRefObject<Service | null>,
   planetsRef: React.MutableRefObject<Record<string, HTMLElement>>
