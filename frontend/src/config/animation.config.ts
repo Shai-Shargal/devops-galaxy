@@ -8,7 +8,7 @@
 export const ANIMATION_CONFIG = {
   // Rotation speed (radians per frame)
   // Lower = slower rotation
-  ROTATION_SPEED: 0.008,
+  ROTATION_SPEED: 0.004,
 
   // Animation frame rate (frames per second)
   // Used for calculating deltas and timings
