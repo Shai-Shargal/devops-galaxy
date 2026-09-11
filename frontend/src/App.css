@@ -35,7 +35,7 @@
   line-height: 1.2;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0;
 }
 
 .header-title h1::before {
